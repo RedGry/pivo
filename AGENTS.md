@@ -31,6 +31,7 @@
 - `release/0.1.0` is the active integration branch for development and bug fixes in the 0.1 line. Start work from its latest remote state, not from `main` or a release tag. Use `codex/<topic>` branches and pull requests into `release/0.1.0` for isolated work; a coordinator may commit agreed work directly to the integration branch.
 - Check the current branch and working tree before editing. Preserve other agents' changes and coordinate shared checkout/build ownership before switching branches or running builds.
 - Promote a reviewed, validated integration branch to `main` through a pull request. Do not disable required checks or branch protection to complete a merge.
+- Do not use CI-skip markers on commits being promoted to `main`; the pull request must receive its required check result.
 - Stable releases use immutable `vMAJOR.MINOR.PATCH` tags on the approved release commit. Never move a published release tag or replace its assets. After `v0.1.0`, fixes require a new patch version such as `v0.1.1`; the integration branch may keep its name.
 - Before tagging, synchronize workspace Cargo, Tauri and frontend versions and lockfiles, update CHANGELOG.md, verify secret exclusions, and follow docs/UPDATES.md. Monitor the release workflow through successful packaging and publication; a queued or merely started workflow is not a completed release.
 

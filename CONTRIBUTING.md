@@ -12,6 +12,8 @@ Use `release/0.1.0` as the active integration branch for development and bug fix
 
 Promote the reviewed integration branch into `main` through a pull request after the relevant checks pass. Tag the approved release commit using `vMAJOR.MINOR.PATCH`; follow [release preparation](docs/UPDATES.md). Published tags and assets are immutable. The next fix after `v0.1.0` is a new patch release, such as `v0.1.1`, even if work remains on `release/0.1.0`.
 
+Do not use CI-skip markers on commits being promoted to `main`: required pull-request checks must actually run. A skipped workflow can leave the pull request blocked.
+
 Documentation and process changes require focused validation; they do not justify rerunning application builds or live UI checks locally. A queued GitHub workflow is pending work, not proof of a released version.
 
 ## Validation
