@@ -69,3 +69,8 @@ jobs:
         run: |
           $assets = @(Get-ChildItem -LiteralPath release -File | Where-Object { $_.Name -ne 'notes.md' } | ForEach-Object { $_.FullName })
           gh release create $env:RELEASE_TAG @assets --verify-tag --draft --title "PivO $env:RELEASE_TAG" --notes-file release/notes.md
+      - name: Publish validated release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release edit $env:RELEASE_TAG --draft=false --latest

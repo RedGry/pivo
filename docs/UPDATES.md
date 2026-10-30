@@ -2,7 +2,7 @@
 
 PivO uses the official Tauri 2 updater and one stable Windows x64 release channel. GitHub Releases hosts the NSIS installer, its updater signature and `latest.json`; there is no separate update server. The configured endpoint is `https://github.com/RedGry/pivo/releases/latest/download/latest.json`.
 
-Releases stay in `RedGry/pivo`. The repository is currently private, so its update feed and release assets are unavailable to anonymous app requests. The owner will make the repository public separately; public visibility is a prerequisite for distributing updates through this endpoint. Do not embed a GitHub access token in the application or updater configuration.
+Releases stay in `RedGry/pivo`. The repository is public. Public visibility is required for anonymous access to the update feed and release assets. Do not embed a GitHub access token in the application or updater configuration.
 
 The first installation uses the NSIS setup executable and installs for the current Windows user. Existing portable copies need that first installation manually. Do not treat copying a new portable executable as an installer update.
 
@@ -18,7 +18,7 @@ Get-Content -Raw .local/signing/pivo.key | gh secret set TAURI_SIGNING_PRIVATE_K
 
 The command passes the key through stdin without printing it. Never print the key to logs. Repository write access is required.
 
-Initial setup on 2026-10-30 saved `TAURI_SIGNING_PRIVATE_KEY` in `RedGry/pivo`. The local key has no password. The release workflow still needs to be committed and pushed before GitHub can execute it; no release has been published by this setup.
+Initial setup on 2026-10-30 saved `TAURI_SIGNING_PRIVATE_KEY` in `RedGry/pivo`. The local key has no password. The release workflow is committed and runs on stable version tags.
 
 The updater signature confirms that an update was signed by PivO's key. It is separate from Windows Authenticode signing; it does not remove SmartScreen warnings or provide a Windows publisher certificate. Tauri verifies the installer signature before starting installation. See the [Tauri updater documentation](https://v2.tauri.app/plugin/updater/).
 
@@ -29,8 +29,8 @@ The updater signature confirms that an update was signed by PivO's key. It is se
 3. Run the checks in `AGENTS.md` and `node --test scripts/release/prepare.test.mjs`.
 4. Commit the release changes, create the stable tag `vX.Y.Z` and push it. The workflow rejects prerelease tags and version mismatches.
 5. The Windows release workflow tests the code, builds an x64 NSIS installer with locked dependencies, signs it and creates a **draft** GitHub release. The installer includes the code license, asset license and dependency notices from the configured bundle resources.
-6. Review the draft's installer, `.exe.sig`, `latest.json` and release notes. Test the signed installer in a disposable Windows account or VM. Confirm that it installs per user and launches correctly, and that license resources are included.
-7. Publish the draft as the latest stable release only after review. Publishing makes its manifest available at the app's update endpoint. Drafts are deliberately invisible to update checks.
+6. The workflow publishes the complete draft as the latest release only after all checks, signed packaging and asset uploads succeed. A failed build does not publish a release.
+7. Verify the published installer in a disposable Windows account or VM. Publishing makes its manifest available at the app's update endpoint; it does not establish the installed-version upgrade acceptance below.
 
 The manifest points to the immutable versioned installer URL. Keep published installer and signature files unchanged. Rebuilding a version and replacing its files can invalidate the signature or mix files downloaded by clients; publish a new version instead. This workflow intentionally does not replace an existing release when rerun: inspect the failed run and existing draft before retrying.
 
@@ -59,3 +59,4 @@ Supply the actual key password instead of an empty value when necessary. Install
 Unit tests and a successful package build do not prove a working update. Before calling the published update path verified, install one signed version and update it to a second higher signed version. Check download progress, signature rejection for a modified installer, offline failure and retry, application exit, installation and automatic restart, preserved user settings, and clean uninstall. Exercise the update controls at different DPIs, with fullscreen applications and after sleep/resume; confirm decorative panel areas still pass clicks through and do not steal focus from another process.
 
 Record the exact versions and evidence in `docs/VALIDATION.md`. Until that installed-version transition is exercised, end-to-end updates remain unverified.
+
