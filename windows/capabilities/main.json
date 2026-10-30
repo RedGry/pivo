@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-window",
+  "description": "Receive companion state from the native application.",
+  "windows": ["main", "settings"],
+  "permissions": ["core:event:allow-listen", "core:event:allow-unlisten"]
+}

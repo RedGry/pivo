@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "example.stretch",
+  "name": { "en": "Stretch break" },
+  "description": { "en": "A configurable reminder to pause and stretch." },
+  "author": "PivO examples",
+  "icon": { "type": "emoji", "value": "🧘" },
+  "kind": "timer",
+  "seconds": 3600,
+  "breakSeconds": 60,
+  "settings": [
+    { "key": "interval", "type": "number", "bind": "seconds", "unit": "minutes", "label": { "en": "Time between breaks (minutes)" }, "default": 60, "min": 1, "max": 180 },
+    { "key": "stretch", "type": "number", "bind": "breakSeconds", "unit": "seconds", "label": { "en": "Stretch duration (seconds)" }, "default": 60, "min": 10, "max": 300 }
+  ]
+}

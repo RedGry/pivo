@@ -1,0 +1,2 @@
+.plugin-icon { display: inline-grid; place-items: center; flex: 0 0 var(--plugin-icon-size, 40px); width: var(--plugin-icon-size, 40px); height: var(--plugin-icon-size, 40px); overflow: hidden; border-radius: 9px; background: var(--raised); font-family: "Segoe UI Emoji", "Segoe UI Symbol", sans-serif; font-size: calc(var(--plugin-icon-size, 40px) * .7); line-height: 1; }
+.plugin-icon img { display: block; width: 100%; height: 100%; object-fit: contain; }

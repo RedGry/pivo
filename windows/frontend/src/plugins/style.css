@@ -1,0 +1,15 @@
+.plugin-island h2 { margin: 0; font-size: 12px; font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.plugin-title { --plugin-icon-size: 16px; display: flex; align-items: center; gap: 6px; }
+.plugin-title > span:first-child { display: flex; flex-shrink: 0; }
+.plugin-title > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.plugin-title .plugin-icon { border-radius: 4px; }
+.plugin-value { font-size: 31px; line-height: 38px; font-variant-numeric: tabular-nums; font-weight: 650; letter-spacing: -.04em; }
+.plugin-value.information { font-size: 12px; line-height: 17px; height: 48px; overflow: hidden; white-space: pre-wrap; overflow-wrap: anywhere; font-weight: 400; letter-spacing: normal; }
+.plugin-detail { font-size: 10px; opacity: .65; }
+.plugin-controls { position: absolute; top: 74px; left: 0; width: 308px; height: 24px; }
+.plugin-controls span { position: absolute; display: flex; align-items: center; justify-content: center; height: 24px; border-radius: 12px; background: #998ba526; font-size: 11px; overflow: hidden; white-space: nowrap; }
+.plugin-controls span:nth-child(1) { left: 0; width: 24px; }
+.plugin-controls span:nth-child(2) { left: 33px; width: 100px; }
+.plugin-controls span:nth-child(3) { left: 143px; width: 132px; }
+.plugin-controls span:nth-child(4) { left: 284px; width: 24px; }
+.plugin-controls span:nth-child(1), .plugin-controls span:nth-child(4) { font-size: 20px; }

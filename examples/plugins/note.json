@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "example.note",
+  "name": { "en": "A small reminder" },
+  "description": { "en": "Keep a personal reminder on your island." },
+  "author": "PivO examples",
+  "icon": { "type": "emoji", "value": "📝" },
+  "kind": "information",
+  "text": { "en": "{reminder}" },
+  "settings": [
+    { "key": "reminder", "type": "text", "bind": "text", "label": { "en": "Reminder text" }, "default": "Relax your shoulders. Look away from the screen for a moment.", "maxLength": 160 }
+  ]
+}

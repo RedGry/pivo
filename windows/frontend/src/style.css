@@ -1,0 +1,67 @@
+@import './presentation/theme.css';
+:root {
+  font-family: "Segoe UI Variable Text", "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: transparent;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+body { pointer-events: none; }
+.panel {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, var(--lift, 0px));
+  width: var(--width, 180px);
+  height: var(--height, 40px);
+  overflow: hidden;
+  background: var(--island-surface);
+  contain: layout paint;
+}
+.character { position: absolute; inset: 0; }
+.mascot { position: absolute; left: var(--image-x); top: var(--image-y); opacity: var(--reveal, 0); }
+.mascot img { display: block; width: var(--image-size); height: var(--image-size); }
+.eyes { position: absolute; left: var(--eye-x); top: var(--eye-y); opacity: var(--eye-opacity, 0); }
+.gaze { position: absolute; transform: translate(var(--gaze-x, 0px), var(--gaze-y, 0px)); transition: transform 160ms ease-out; }
+.panel[data-reduced-motion="true"] .gaze { transform: none; transition: none; }
+.eyes i { position: absolute; top: 0; width: var(--eye-width); height: var(--eye-height); border-radius: 50%; background: var(--eye-color); transform: translate(-50%, -50%); }
+.eyes i:first-child { left: calc(var(--eye-spacing) / -2); }
+.eyes i:last-child { left: calc(var(--eye-spacing) / 2); }
+.panel-header { position: absolute; left: 0; right: 0; top: 8px; height: 24px; line-height: 24px; white-space: nowrap; opacity: var(--content, 0); }
+.header-status { position: absolute; left: 50%; transform: translateX(-50%); max-width: calc(100% - 176px); height: 24px; display: flex; gap: 8px; align-items: center; }
+.header-date { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: 450; }
+.clock { flex-shrink: 0; font-size: 16px; font-weight: 750; font-variant-numeric: tabular-nums; }
+.status-ring { flex-shrink: 0; display: block; width: 20px; height: 20px; stroke: #18cb76; stroke-width: 2.7; transform: rotate(-90deg); }
+.ring-track { opacity: .22; }
+.ring-progress { stroke-linecap: round; }
+.header-status .status-ring { margin-right: 2px; }
+.strip-status { position: absolute; left: 0; right: 0; top: 16px; height: 24px; padding: 0 20px; display: flex; gap: 12px; align-items: center; justify-content: center; opacity: var(--strip-opacity, 0); }
+.strip-status .status-ring { width: 16px; height: 16px; }
+.strip-status .clock { font-size: 18px; line-height: 24px; }
+.panel-header .control { position: absolute; top: 0; }
+.panel-header .settings { left: 480px; }
+.panel-header .exit { left: 512px; }
+.control { width: 24px; height: 24px; display: grid; place-items: center; color: var(--muted); }
+.control svg { display: block; width: 18px; height: 18px; }
+.panel:not([data-actions-ready="true"]) .control,
+.panel:not([data-actions-ready="true"]) .plugin-controls { visibility: hidden; }
+.panel:not([data-update-ready="true"]) .update-actions { visibility: hidden; }
+.content { position: absolute; left: 224px; top: 44px; width: 296px; opacity: var(--content, 0); }
+p { margin: 0 0 12px; font-size: 14px; line-height: 22px; white-space: pre-line; }
+.reminder { position: absolute; left: 66px; top: 0; opacity: 0; z-index: 1; }
+.reminder img { display: block; width: 48px; height: 48px; }
+.plugin-island { position: absolute; left: 207px; top: 44px; width: 308px; height: 100px; opacity: var(--content, 0); }
+[hidden] { display: none !important; }
+.updates { font-size: 13px; line-height: 20px; }
+.update-message { max-height: 40px; overflow: hidden; overflow-wrap: anywhere; }
+.update-notes { margin-top: 6px; max-height: 30px; overflow: hidden; color: var(--muted); white-space: pre-line; font-size: 11px; line-height: 15px; }
+.updates.quiet { position: absolute; top: 88px; left: -192px; width: 150px; font-size: 10px; line-height: 13px; color: var(--muted); }
+.updates.quiet .update-message { max-height: 30px; }
+.update-actions { position: absolute; left: 224px; top: 124px; display: flex; gap: 10px; opacity: var(--content, 0); font-size: 12px; }
+.update-actions span { width: 137px; height: 28px; line-height: 28px; text-align: center; border: 1px solid var(--stroke); border-radius: 7px; }
+.update-actions span:last-child { width: 137px; }

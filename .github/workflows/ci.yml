@@ -1,0 +1,36 @@
+name: Windows CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: windows/frontend/package-lock.json
+      - name: Install frontend dependencies
+        run: npm --prefix windows/frontend ci
+      - name: Test release metadata
+        run: node --test scripts/release/prepare.test.mjs
+      - name: Test retrospective hook
+        run: node --test .codex/hooks/retro-stop.test.mjs
+      - name: Test frontend
+        run: npm --prefix windows/frontend test
+      - name: Build frontend
+        run: npm --prefix windows/frontend run build
+      - name: Install Rust stable
+        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+      - name: Format
+        run: cargo +stable fmt --all -- --check
+      - name: Lint
+        run: cargo +stable clippy --workspace --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo +stable test --workspace --locked
+      - name: Release build
+        run: cargo +stable build -p pivo-windows --release --locked

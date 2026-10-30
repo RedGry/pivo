@@ -1,0 +1,71 @@
+name: Windows release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      CARGO_BUILD_TARGET: x86_64-pc-windows-msvc
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: windows/frontend/package-lock.json
+      - name: Verify release metadata
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          node --test scripts/release/prepare.test.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node scripts/release/prepare.mjs check $env:RELEASE_TAG
+      - name: Require updater signing key
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:TAURI_SIGNING_PRIVATE_KEY)) {
+            throw 'Configure TAURI_SIGNING_PRIVATE_KEY before building a release.'
+          }
+      - name: Install Rust stable
+        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+      - name: Validate application
+        env:
+          RUSTUP_TOOLCHAIN: stable
+        run: pwsh -NoProfile -File scripts/validate.ps1
+      - name: Build signed NSIS installer
+        working-directory: windows
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: frontend/node_modules/.bin/tauri build --ci --target x86_64-pc-windows-msvc --bundles nsis -- --locked
+      - name: Prepare updater manifest
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: node scripts/release/prepare.mjs manifest $env:RELEASE_TAG target/x86_64-pc-windows-msvc/release/bundle/nsis release
+      - name: Keep signed release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PivO-Windows-signed
+          path: release/
+          if-no-files-found: error
+      - name: Create complete draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $assets = @(Get-ChildItem -LiteralPath release -File | Where-Object { $_.Name -ne 'notes.md' } | ForEach-Object { $_.FullName })
+          gh release create $env:RELEASE_TAG @assets --verify-tag --draft --title "PivO $env:RELEASE_TAG" --notes-file release/notes.md

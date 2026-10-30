@@ -1,0 +1,16 @@
+/target/
+/dist/
+/windows/frontend/node_modules/
+/windows/frontend/dist/
+/.local/
+/.codex/config.toml
+/.codex/hooks.json
+*.pdb
+*.log
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
