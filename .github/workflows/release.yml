@@ -51,7 +51,7 @@ jobs:
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-        run: frontend/node_modules/.bin/tauri build --ci --target x86_64-pc-windows-msvc --bundles nsis -- --locked
+        run: node frontend/node_modules/@tauri-apps/cli/tauri.js bundle --ci --target x86_64-pc-windows-msvc --bundles nsis
       - name: Prepare updater manifest
         env:
           RELEASE_TAG: ${{ github.ref_name }}

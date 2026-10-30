@@ -38,25 +38,24 @@ Before the first published release, the endpoint may return HTTP 404; that is an
 
 ## Local packaging
 
-After installing frontend dependencies, use the existing private key without displaying it:
+Run `pwsh -NoProfile -File scripts/validate.ps1` first. Then package its validated release executable with the existing private key without displaying it:
 
 ```powershell
 $env:TAURI_SIGNING_PRIVATE_KEY = (Resolve-Path .local/signing/pivo.key).Path
 $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = ''
 Push-Location windows
 try {
-    frontend/node_modules/.bin/tauri build --ci --target x86_64-pc-windows-msvc --bundles nsis -- --locked
+    node frontend/node_modules/@tauri-apps/cli/tauri.js bundle --ci --bundles nsis
 } finally {
     Pop-Location
     Remove-Item Env:TAURI_SIGNING_PRIVATE_KEY, Env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD
 }
 ```
 
-Supply the actual key password instead of an empty value when necessary. Installers and signatures are written to `target/x86_64-pc-windows-msvc/release/bundle/nsis/`.
+Supply the actual key password instead of an empty value when necessary. Installers and signatures are written to `target/release/bundle/nsis/` (or the explicit target directory selected by `CARGO_BUILD_TARGET` in CI).
 
 ## Release acceptance
 
 Unit tests and a successful package build do not prove a working update. Before calling the published update path verified, install one signed version and update it to a second higher signed version. Check download progress, signature rejection for a modified installer, offline failure and retry, application exit, installation and automatic restart, preserved user settings, and clean uninstall. Exercise the update controls at different DPIs, with fullscreen applications and after sleep/resume; confirm decorative panel areas still pass clicks through and do not steal focus from another process.
 
 Record the exact versions and evidence in `docs/VALIDATION.md`. Until that installed-version transition is exercised, end-to-end updates remain unverified.
-
