@@ -25,6 +25,15 @@
 
 ## Agent workflow
 
+### Git and releases
+
+- `main` is protected. Never push commits directly to it, force-push it, delete it or bypass protection. Merge through a pull request with the required `windows` CI check and resolved review conversations.
+- `release/0.1.0` is the active integration branch for development and bug fixes in the 0.1 line. Start work from its latest remote state, not from `main` or a release tag. Use `codex/<topic>` branches and pull requests into `release/0.1.0` for isolated work; a coordinator may commit agreed work directly to the integration branch.
+- Check the current branch and working tree before editing. Preserve other agents' changes and coordinate shared checkout/build ownership before switching branches or running builds.
+- Promote a reviewed, validated integration branch to `main` through a pull request. Do not disable required checks or branch protection to complete a merge.
+- Stable releases use immutable `vMAJOR.MINOR.PATCH` tags on the approved release commit. Never move a published release tag or replace its assets. After `v0.1.0`, fixes require a new patch version such as `v0.1.1`; the integration branch may keep its name.
+- Before tagging, synchronize workspace Cargo, Tauri and frontend versions and lockfiles, update CHANGELOG.md, verify secret exclusions, and follow docs/UPDATES.md. Monitor the release workflow through successful packaging and publication; a queued or merely started workflow is not a completed release.
+
 - Use the repository skill `.agents/skills/caveman/SKILL.md` for concise chat replies by default. Honor requests for normal or detailed responses. Project files remain normal English.
 - Features and improvements: implement the agreed scope first, including meaningful behavior tests. Batch final validation after implementation and review corrections settle. Do not run full suites, release builds or manual UI checks after each edit. Use a focused check during implementation only to resolve a concrete uncertainty or failure.
 - Bug fixes: first add a regression test and run it against the unfixed behavior; confirm that it fails for the reported reason. Then fix the bug and rerun that test. If automation cannot reproduce the native behavior, document the blocker and the smallest repeatable MCP reproduction before fixing; do not claim a failing automated test exists.
