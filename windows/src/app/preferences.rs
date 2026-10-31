@@ -74,11 +74,73 @@ pub struct Preferences {
     pub display: String,
     pub theme: Theme,
     pub compact_mode: CompactMode,
+    pub obsession: bool,
+    pub obsession_activity: ObsessionActivity,
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ObsessionActivity {
+    #[default]
+    Reading,
+    Writing,
+    Coding,
+}
+
+impl ObsessionActivity {
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "reading" => Some(Self::Reading),
+            "writing" => Some(Self::Writing),
+            "coding" => Some(Self::Coding),
+            _ => None,
+        }
+    }
+    pub fn saved(value: &str) -> Self {
+        Self::parse(value.trim()).unwrap_or_default()
+    }
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Reading => "reading",
+            Self::Writing => "writing",
+            Self::Coding => "coding",
+        }
+    }
+}
+
+pub fn saved_obsession(value: &str) -> bool {
+    value.trim().parse().unwrap_or(false)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn shared_activity_roundtrips_and_invalid_saved_values_use_reading() {
+        for activity in [
+            ObsessionActivity::Reading,
+            ObsessionActivity::Writing,
+            ObsessionActivity::Coding,
+        ] {
+            assert_eq!(ObsessionActivity::parse(activity.as_str()), Some(activity));
+            assert_eq!(
+                ObsessionActivity::saved(&format!(" {}\n", activity.as_str())),
+                activity
+            );
+        }
+        for value in ["", "invalid", "READING", "read"] {
+            assert!(ObsessionActivity::parse(value).is_none());
+            assert_eq!(ObsessionActivity::saved(value), ObsessionActivity::Reading);
+        }
+    }
+    #[test]
+    fn obsession_is_opt_in_and_invalid_stored_values_stay_disabled() {
+        for value in ["", "false", "invalid", "1", "TRUE"] {
+            assert!(!saved_obsession(value), "{value:?}");
+        }
+        assert!(saved_obsession("true"));
+        assert!(saved_obsession(" true\n"));
+    }
     #[test]
     fn invalid_stored_choices_fall_back_but_setters_can_reject_them() {
         assert_eq!(Theme::saved("invalid"), Theme::Dark);

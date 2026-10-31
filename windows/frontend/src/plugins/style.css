@@ -12,4 +12,4 @@
 .plugin-controls span:nth-child(2) { left: 33px; width: 100px; }
 .plugin-controls span:nth-child(3) { left: 143px; width: 132px; }
 .plugin-controls span:nth-child(4) { left: 284px; width: 24px; }
-.plugin-controls span:nth-child(1), .plugin-controls span:nth-child(4) { font-size: 20px; }
+.plugin-controls svg { display: block; width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }

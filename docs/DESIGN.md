@@ -39,7 +39,32 @@ Settings is a separate focusable window with a custom title bar and grouped Appe
 
 Shared locale JSON files provide panel, settings and tray strings. Changes apply live and preferences persist independently of the existing automatic-update file. Adding a language requires only its file and a rebuild; see ../locales/README.md.
 
-The current revision is launched for user manual inspection only. Automated native-input, Settings, focus and affected DPI/monitor acceptance remains deferred; source checks and prior prototype passes do not establish these runtime results. Compact gaze following, finite blinking and occasional curiosity are implemented. Strip shows a finite original-mascot peek every 120–180 seconds. Hidden and reduced-motion states cancel expression timers and active gestures. Sleep/wake poses, hand gestures, petting and music reactions remain future work. The imported PNG remains static artwork; runtime transforms provide the implemented movement.
+Automated native-input, Settings, focus and affected DPI/monitor acceptance remains tracked in VALIDATION.md; source checks and prior prototype passes do not establish these runtime results. Compact gaze following, finite blinking and occasional curiosity are implemented. Strip shows a finite original-mascot peek every 120–180 seconds. Hidden and reduced-motion states cancel expression timers and active gestures. Obsession adds opt-in wake and hand poses described below; petting and music reactions remain future work. The imported PNG remains the source artwork; runtime transforms provide movement.
+
+## Obsession appearance
+
+Appearance settings contains a persistent Obsession switch, off by default. This mode preserves the original black body, white eyes and hands. It adds finite, decorative reactions inspired by the user's selected film references:
+
+- Enabling breaks a small drawn twig, pauses in a direct gaze and blinks.
+- Disabling immediately stops the mode and its scheduling. A single farewell shakes its head and raises its hands, then relaxes, blinks and exhales. It cannot delay the switch or reopen the island.
+- Switching an unfinished running or paused timer to the other mode produces a disappointed expression and localized work-session caption. Pausing and natural completion do not trigger it.
+- Sparse idle reactions show a temporary thin smile, a direct stare ending in a blink, or a brief distressed expression returning to affection. Compact Eyes uses the finite stare; Strip stays quiet.
+- A real suspend/resume edge produces wide eyes and a localized waiting caption. Duplicate Windows resume broadcasts do not repeat the reaction.
+- Dwelling over the expanded mascot reaches toward the cursor. Dwelling over the rendered clock produces a sideways look and a hand near its edge. These regions only observe input; they do not capture it.
+- Starting an ordinary fold briefly clutches the edge during the existing panel transition. Reversal cancels the pose without changing reveal or fold timing.
+- While enabled, the same eye centers display static lilac hearts in Expanded and Eyes, including reduced motion. Turning the mode off restores the original eye shapes.
+- Starting or resuming a focus timer shows a notebook with two mascots at one table. Pausing a running timer folds the hands and adds a short nervous tap.
+- Observing an active timer reach zero offers a small heart, then a larger spare if the mascot has not been noticed. Entering the mascot region cancels the offer without capturing the cursor. Already finished timers restored from storage do not announce completion again.
+- Sparse idle scenes also include false sleep, a lilac thread drawn into a heart, and a compatibility meter that removes an extra percent sign to leave 100%. Entering the expanded mascot region during false sleep opens one eye briefly.
+- Repeated deliberate reveals show a hand-corrected visit counter for the current enabled session. Matching hour/minute digits show linked rings once per observed matching minute. Neither reaction changes the timer, system clock or reveal geometry.
+- Starting or resuming a break offers two cups, moving one toward the user. Leaving the expanded mascot briefly starts a binocular search after a short grace period; ordinary folding cancels it first. Approaching interrupts the search.
+- Focus starts retain the notebook scene, then send one air kiss. Pausing, cancellation or another reaction cancels the queued kiss. Break starts serve a sandwich alongside the cups.
+- Appearance also selects a shared activity: reading, writing or coding. The choice is saved independently of the mode; enabled Expanded reacts to a changed choice and occasionally repeats the chosen activity. No application content is inspected.
+- Idle encouragement briefly hides behind a localized support sign. A juggling scene catches two hearts while the third lands on the head. A busy laptop can appear only while the selected focus timer runs; approaching or pausing closes it.
+- A left double click over the settled expanded mascot draws temporary hearts near the clicked point. Raw Input observes both presses using Windows double-click timing and distance settings; underlying applications still receive the clicks. OFF, reduced motion, hiding and presentation changes cancel the reaction and clear the click history.
+- Expanded idle scenes can rehearse a greeting while the pointer is away, raise an oversized heart bouquet with the eyes peeking above it, or patch a cracked heart and hug it. Approaching stops the rehearsed greeting. All props are decorative and bounded by the existing mascot area.
+
+Expanded-only enable/farewell reactions can wait for the next deliberate reveal for up to 60 seconds, without a hidden timer. Resume can react immediately in Eyes or wait for reveal from Strip. Hiding, fullscreen suppression, reduced motion and page teardown cancel active poses and timers. Enabling again replaces a pending farewell. All text comes from the shared locale catalog. This implementation is silent.
 
 ## Plugin pages and tray
 
@@ -47,6 +72,8 @@ Expanded hosts a compact plugin page beside the original mascot. The first bundl
 
 The tray contains Autostart, Settings, a separator, About PivO, Check for updates and Exit. Autostart uses the current user's Windows Run entry. About opens the separate Settings window directly on its About page.
 ## Date and time header
+
+Obsession changes the progress contour from a green circle to a lilac heart in both Expanded and Strip. Both use the same remaining fraction, pause behavior, empty track and information-page hiding; OFF immediately restores the circular contour.
 
 Expanded centers a small plugin-progress ring, the localized weekday/date and a bold 24-hour clock in one top row. The PivO wordmark is omitted from this row. Settings and Exit remain aligned to their native targets on the right. Strip shows the same plugin-progress ring and a prominent clock within its visible 24-pixel row; Eyes keeps its original eye identity. The ring follows the active enabled plugin: timer plugins supply elapsed progress for their configured focus/break mode. Information pages supply none, so the ring is hidden. Plugins report elapsed progress from zero to one; the ring displays the remaining fraction, draining from full at idle/reset to empty at completion. Paused progress stays fixed. Hidden and Eyes presentations do not schedule minute clock updates.
 Date field order, localized names and punctuation follow the selected PivO locale through Intl.DateTimeFormat. Language changes refresh the header immediately; the 24-hour clock remains consistent across locales.

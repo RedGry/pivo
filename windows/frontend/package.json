@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 1420 --strictPort",
     "typecheck": "tsc --noEmit",
-    "test": "node --test src/motion/panel.test.ts src/i18n/catalog.test.ts src/presentation/island.test.ts src/presentation/controls.test.ts src/presentation/clock.test.ts src/motion/ambient.test.ts src/plugins/model.test.ts src/plugins/icons.test.ts",
+    "test": "node --test src/motion/panel.test.ts src/i18n/catalog.test.ts src/presentation/island.test.ts src/presentation/controls.test.ts src/presentation/clock.test.ts src/presentation/obsession.test.ts src/motion/ambient.test.ts src/motion/obsession.test.ts src/plugins/model.test.ts src/plugins/icons.test.ts src/plugins/island.test.ts",
     "build": "npm run typecheck && vite build",
     "desktop:dev": "cd .. && tauri dev",
     "desktop:build": "cd .. && tauri build --no-bundle"

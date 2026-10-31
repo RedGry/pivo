@@ -12,6 +12,8 @@ import { mountPluginOrder, mountPluginSettings } from '../plugins/settings.ts';
 const language = document.querySelector<HTMLSelectElement>('#language')!;
 const display = document.querySelector<HTMLSelectElement>('#display')!;
 const automatic = document.querySelector<HTMLInputElement>('#automatic-updates')!;
+const obsession = document.querySelector<HTMLInputElement>('#obsession')!;
+const obsessionActivity = document.querySelector<HTMLSelectElement>('#obsession-activity')!;
 const check = document.querySelector<HTMLButtonElement>('#check-updates')!;
 const error = document.querySelector<HTMLElement>('#error')!;
 const themeInputs = [...document.querySelectorAll<HTMLInputElement>('input[name="theme"]')];
@@ -90,9 +92,11 @@ function render(): void {
     display.replaceChildren(...options);
   }
   display.value = prefs.display;
+  obsession.checked = prefs.obsession;
+  obsessionActivity.value = prefs.obsessionActivity;
   for (const input of themeInputs) input.checked = input.value === prefs.theme;
   for (const input of compactInputs) input.checked = input.value === prefs.compactMode;
-  for (const control of [language, display, ...themeInputs, ...compactInputs]) control.disabled = loading || saving;
+  for (const control of [language, display, obsession, obsessionActivity, ...themeInputs, ...compactInputs]) control.disabled = loading || saving;
   document.querySelector<HTMLElement>('#version')!.textContent = t('settings.version', { version: packageInfo.version });
   document.querySelector<HTMLElement>('#sidebar-version')!.textContent = packageInfo.version;
   renderCaption();
@@ -110,7 +114,7 @@ function failed(message: string, detail: unknown): void {
   error.hidden = false;
   console.error('Settings action failed:', detail);
 }
-async function save(command: 'pivo_set_locale' | 'pivo_set_theme' | 'pivo_set_compact_mode' | 'pivo_set_display', values: Record<string, string>): Promise<void> {
+async function save(command: 'pivo_set_locale' | 'pivo_set_theme' | 'pivo_set_compact_mode' | 'pivo_set_display' | 'pivo_set_obsession' | 'pivo_set_obsession_activity', values: Record<string, string | boolean>): Promise<void> {
   if (saving) { render(); return; }
   saving = true;
   error.hidden = true;
@@ -121,6 +125,8 @@ async function save(command: 'pivo_set_locale' | 'pivo_set_theme' | 'pivo_set_co
 }
 language.addEventListener('change', () => { void save('pivo_set_locale', { locale: language.value }); });
 display.addEventListener('change', () => { void save('pivo_set_display', { display: display.value }); });
+obsession.addEventListener('change', () => { void save('pivo_set_obsession', { enabled: obsession.checked }); });
+obsessionActivity.addEventListener('change', () => { void save('pivo_set_obsession_activity', { activity: obsessionActivity.value }); });
 for (const input of themeInputs) input.addEventListener('change', () => {
   if (input.checked) void save('pivo_set_theme', { theme: input.value });
 });

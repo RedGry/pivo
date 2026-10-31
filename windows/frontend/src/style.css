@@ -36,7 +36,11 @@ body { pointer-events: none; }
 .header-status { position: absolute; left: 50%; transform: translateX(-50%); max-width: calc(100% - 176px); height: 24px; display: flex; gap: 8px; align-items: center; }
 .header-date { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: 450; }
 .clock { flex-shrink: 0; font-size: 16px; font-weight: 750; font-variant-numeric: tabular-nums; }
-.status-ring { flex-shrink: 0; display: block; width: 20px; height: 20px; stroke: #18cb76; stroke-width: 2.7; transform: rotate(-90deg); }
+.status-ring { flex-shrink: 0; display: block; width: 20px; height: 20px; stroke: #18cb76; stroke-width: 2.7; }
+.panel[data-obsession-enabled="true"] .status-ring { stroke: #d39be4; stroke-width: 2.2; }
+.panel[data-obsession-enabled="true"] .status-ring path {
+  d: path("M10 5.5C7 0.8 1.5 2 1.5 6.5C1.5 10 6 13.5 10 17C14 13.5 18.5 10 18.5 6.5C18.5 2 13 0.8 10 5.5Z");
+}
 .ring-track { opacity: .22; }
 .ring-progress { stroke-linecap: round; }
 .header-status .status-ring { margin-right: 2px; }

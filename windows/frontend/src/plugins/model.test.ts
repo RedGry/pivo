@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { builtin, informationText, initialState, localized, movePlugin, parseManifest, pluginProgress, resetTimer, restore, saveConfiguration, secondsLeft, timerAction, timerFor, type Entry } from './model.ts';
+import { builtin, informationText, initialState, localized, movePlugin, parseManifest, pluginProgress, resetTimer, restore, saveConfiguration, secondsLeft, timerAction, timerActionCancels, timerFor, type Entry } from './model.ts';
 import { configuration } from './configuration.ts';
 
 test('external timer manifests accept localized names and bounded durations', () => {
@@ -158,6 +158,21 @@ test('external timer progress follows configured active-mode duration and clamps
 test('information plugins provide no timer progress', () => {
   const entry: Entry = { manifest: parseManifest({ schemaVersion: 1, id: 'example.progressless', name: { en: 'Note' }, kind: 'information', text: { en: 'No progress' } }), enabled: true };
   assert.equal(pluginProgress(entry, 1000), null);
+});
+
+test('cancellation reactions follow unfinished mode switches without treating pause or completion as cancellation', () => {
+  const entry = initialState().entries[0]!;
+  assert.equal(timerActionCancels(entry, 'secondary', 1000), false);
+  entry.timer = timerAction(entry, 'primary', 1000);
+  assert.equal(timerActionCancels(entry, 'secondary', 1000), true);
+  assert.equal(timerActionCancels(entry, 'primary', 2000), false);
+  assert.equal(timerActionCancels(entry, 'next', 2000), false);
+  entry.timer = timerAction(entry, 'primary', 751000);
+  assert.equal(timerActionCancels(entry, 'secondary', 800000), true);
+  entry.timer = timerAction(entry, 'primary', 800000);
+  assert.equal(timerActionCancels(entry, 'secondary', 1550000), false);
+  entry.timer = resetTimer(entry);
+  assert.equal(timerActionCancels(entry, 'secondary', 1600000), false);
 });
 
 test('optional plugin metadata validates and roundtrips, with legacy metadata absent', () => {

@@ -4,7 +4,7 @@ pub mod localization;
 mod pointer;
 pub mod preferences;
 
-pub use pointer::{PendingPointer, PointerDwell};
+pub use pointer::{DoubleClick, PendingPointer, PointerDwell};
 use preferences::CompactMode;
 use serde::{Deserialize, Serialize};
 
@@ -45,6 +45,12 @@ pub struct Companion {
 }
 
 impl Companion {
+    pub fn set_suspended(&mut self, suspended: bool) -> bool {
+        let resumed = self.suspended && !suspended;
+        self.suspended = suspended;
+        resumed
+    }
+
     pub fn snapshot(&mut self) -> ViewState {
         let visible = self.ready && !self.user_hidden && !self.fullscreen && !self.suspended;
         if !visible {
@@ -147,6 +153,18 @@ pub fn scale(value: i32, dpi: u32) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn resume_is_reported_only_after_a_suspend_edge() {
+        let mut companion = Companion::default();
+        assert!(!companion.set_suspended(false));
+        assert!(!companion.set_suspended(true));
+        assert!(!companion.set_suspended(true));
+        assert!(companion.set_suspended(false));
+        assert!(!companion.set_suspended(false));
+        assert!(!companion.set_suspended(true));
+        assert!(companion.set_suspended(false));
+    }
 
     #[test]
     fn expanded_panel_dismisses_only_on_an_outside_press() {

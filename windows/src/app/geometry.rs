@@ -6,6 +6,38 @@ pub const COMPACT_WIDTH: i32 = 180;
 pub const COMPACT_HEIGHT: i32 = 40;
 pub const COMPACT_LEFT: i32 = (WIDTH - COMPACT_WIDTH) / 2;
 
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum CompanionTarget {
+    Mascot,
+    Clock,
+    None,
+}
+
+// Decorative observation regions, never native input or reveal targets.
+pub fn companion_target(x: f64, y: f64) -> CompanionTarget {
+    let mascot = Rect {
+        left: 60,
+        top: 45,
+        width: 115,
+        height: 80,
+    };
+    // Cover the clock's header area across localized clock widths.
+    let clock = Rect {
+        left: 250,
+        top: 8,
+        width: 190,
+        height: 24,
+    };
+    if mascot.contains(x, y) {
+        CompanionTarget::Mascot
+    } else if clock.contains(x, y) {
+        CompanionTarget::Clock
+    } else {
+        CompanionTarget::None
+    }
+}
+
 #[derive(Clone, Copy)]
 pub struct Rect {
     pub left: i32,
@@ -107,6 +139,39 @@ pub fn reveal(presentation: Presentation) -> Rect {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn companion_observation_regions_have_explicit_edges_and_exclude_action_controls() {
+        use CompanionTarget::*;
+        assert_eq!(companion_target(60.0, 45.0), Mascot);
+        assert_eq!(companion_target(174.99, 124.99), Mascot);
+        assert_eq!(companion_target(250.0, 8.0), Clock);
+        assert_eq!(companion_target(439.99, 31.99), Clock);
+        for (x, y) in [
+            (59.99, 80.0),
+            (175.0, 80.0),
+            (100.0, 125.0),
+            (249.99, 15.0),
+            (440.0, 15.0),
+            (300.0, 32.0),
+            (280.0, 0.0),
+            (280.0, 40.0),
+            (-1.0, 80.0),
+            (f64::NAN, 80.0),
+            (f64::INFINITY, 20.0),
+        ] {
+            assert_eq!(companion_target(x, y), None, "({x}, {y})");
+        }
+        for rect in [CLOSE, SETTINGS, UPDATE, LATER]
+            .into_iter()
+            .chain(PLUGIN_ACTIONS)
+        {
+            assert_eq!(
+                companion_target(f64::from(rect.left), f64::from(rect.top)),
+                None
+            );
+        }
+    }
 
     #[test]
     fn folded_reveal_never_reuses_the_expanded_body() {

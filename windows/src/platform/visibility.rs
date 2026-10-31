@@ -121,11 +121,8 @@ pub unsafe fn compact_occluded(panel: HWND, monitor: &super::displays::Monitor) 
             {
                 return 1;
             }
-            let mut name = [0u16; 128];
-            let length = GetClassNameW(window, name.as_mut_ptr(), name.len() as i32);
-            let class = String::from_utf16_lossy(&name[..length as usize]);
-            if class == "WorkerW"
-                || class == "Progman"
+            let class = window_class(window);
+            if desktop_host(&class)
                 || (class == "PivO.Handle" && GetWindow(window, GW_OWNER) == search.panel)
             {
                 return 1;
@@ -215,9 +212,7 @@ pub unsafe fn fullscreen_on_monitor(monitor: &super::displays::Monitor) -> bool 
         }
         // A decorated maximized window can cover the monitor when the taskbar auto-hides.
         let style = GetWindowLongW(foreground, GWL_STYLE) as u32;
-        if IsZoomed(foreground) != 0 && style & WS_CAPTION == WS_CAPTION {
-            return false;
-        }
+        let decorated_maximized = IsZoomed(foreground) != 0 && style & WS_CAPTION == WS_CAPTION;
         if MonitorFromWindow(foreground, MONITOR_DEFAULTTONEAREST) != monitor.handle {
             return false;
         }
@@ -225,9 +220,49 @@ pub unsafe fn fullscreen_on_monitor(monitor: &super::displays::Monitor) -> bool 
         if GetWindowRect(foreground, &mut bounds) == 0 {
             return false;
         }
-        bounds.left <= monitor.bounds.left
+        let covers_monitor = bounds.left <= monitor.bounds.left
             && bounds.top <= monitor.bounds.top
             && bounds.right >= monitor.bounds.right
-            && bounds.bottom >= monitor.bounds.bottom
+            && bounds.bottom >= monitor.bounds.bottom;
+        fullscreen_suppresses(
+            &window_class(foreground),
+            decorated_maximized,
+            covers_monitor,
+        )
+    }
+}
+
+unsafe fn window_class(window: HWND) -> String {
+    let mut name = [0u16; 128];
+    let length = unsafe { GetClassNameW(window, name.as_mut_ptr(), name.len() as i32) };
+    String::from_utf16_lossy(&name[..length as usize])
+}
+
+fn desktop_host(class: &str) -> bool {
+    matches!(class, "WorkerW" | "Progman")
+}
+
+fn fullscreen_suppresses(class: &str, decorated_maximized: bool, covers_monitor: bool) -> bool {
+    !desktop_host(class) && !decorated_maximized && covers_monitor
+}
+
+#[cfg(test)]
+mod tests {
+    use super::fullscreen_suppresses;
+
+    #[test]
+    fn desktop_hosts_never_suppress_the_companion() {
+        for class in ["WorkerW", "Progman"] {
+            assert!(!fullscreen_suppresses(class, false, true), "{class}");
+        }
+    }
+
+    #[test]
+    fn real_fullscreen_apps_still_suppress_only_when_covering_the_monitor() {
+        for class in ["Chrome_WidgetWin_1", "PivODebug.Fixture", "explorer-window"] {
+            assert!(fullscreen_suppresses(class, false, true), "{class}");
+            assert!(!fullscreen_suppresses(class, true, true), "{class}");
+            assert!(!fullscreen_suppresses(class, false, false), "{class}");
+        }
     }
 }

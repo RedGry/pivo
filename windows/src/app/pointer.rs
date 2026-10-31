@@ -1,5 +1,27 @@
 const SAMPLE_DELAY_SECONDS: f64 = 0.010;
 
+/// Pairs observed left presses without consuming input. Coordinates and extents share physical pixels.
+#[derive(Clone, Copy, Default)]
+pub struct DoubleClick {
+    first: Option<(f64, i32, i32)>,
+}
+
+impl DoubleClick {
+    pub fn press(&mut self, now: f64, x: i32, y: i32, interval: f64, extent: (i32, i32)) -> bool {
+        if let Some((at, first_x, first_y)) = self.first
+            && now >= at
+            && now - at <= interval
+            && (i64::from(x) - i64::from(first_x)).abs() * 2 <= i64::from(extent.0)
+            && (i64::from(y) - i64::from(first_y)).abs() * 2 <= i64::from(extent.1)
+        {
+            self.first = None;
+            return true;
+        }
+        self.first = Some((now, x, y));
+        false
+    }
+}
+
 #[derive(Clone, Copy, Default)]
 pub struct PendingPointer {
     due: Option<f64>,
@@ -54,6 +76,31 @@ impl PointerDwell {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn double_click_pairs_use_elapsed_time_and_physical_system_rectangle() {
+        let mut clicks = DoubleClick::default();
+        assert!(!clicks.press(1.0, 100, 100, 0.5, (8, 8)));
+        assert!(clicks.press(1.5, 104, 96, 0.5, (8, 8)));
+        assert!(
+            !clicks.press(1.6, 104, 96, 0.5, (8, 8)),
+            "a third press begins a new pair"
+        );
+        assert!(clicks.press(1.7, 104, 96, 0.5, (8, 8)));
+    }
+
+    #[test]
+    fn distant_or_late_presses_start_new_pairs_and_reset_discards_history() {
+        let mut clicks = DoubleClick::default();
+        assert!(!clicks.press(1.0, 100, 100, 0.5, (8, 8)));
+        assert!(!clicks.press(1.2, 105, 100, 0.5, (8, 8)));
+        assert!(!clicks.press(1.8, 105, 100, 0.5, (8, 8)));
+        clicks = DoubleClick::default();
+        assert!(!clicks.press(1.9, 105, 100, 0.5, (8, 8)));
+        assert!(clicks.press(2.0, 105, 100, 0.5, (8, 8)));
+        assert!(!clicks.press(3.0, i32::MIN, 0, 0.5, (8, 8)));
+        assert!(!clicks.press(3.1, i32::MAX, 0, 0.5, (8, 8)));
+    }
 
     #[test]
     fn dwell_keeps_first_deadline_and_reentry_starts_a_full_delay() {
