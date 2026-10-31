@@ -60,6 +60,8 @@ The first bundled plugin is Pomodoro, with Start/Pause and focus/break actions o
 
 Compact Eyes blink, occasionally look curious and follow the cursor subtly. Strip briefly shows the original mascot every 120–180 seconds. Hidden and reduced-motion states stop those gestures. Reveal requires a 350 ms hover dwell; leaving Expanded starts a cancellable 200 ms fold delay.
 
+Settings > Appearance includes an optional, persistent **Obsession** mode. The original mascot adds finite twig, smile, stare, wake, cursor-hug, clock-jealousy and folding gestures, plus a disappointed reaction when an unfinished timer changes modes. Enabled eyes become lilac hearts. Focus sessions, pauses and completions add a notebook, nervous patience and heart gifts; rare scenes include false sleep, a thread heart, visit counting, matching-time rings and a playful compatibility check. Turning it off immediately stops the mode and permits one short farewell. Expanded-only reactions wait briefly for a deliberate reveal. The mode is silent and respects hidden and reduced-motion states; see [design notes](docs/DESIGN.md) and [validation limits](docs/VALIDATION.md).
+
 The tray offers Autostart, Settings, About PivO, Check for updates and Exit. Autostart applies to the current Windows user.
 
 ## Updates and installers

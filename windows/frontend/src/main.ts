@@ -3,13 +3,14 @@ import { listen } from '@tauri-apps/api/event';
 import mascotUrl from '../../../assets/mascot.png';
 import { PanelMotion } from './motion/panel.ts';
 import { AmbientMotion, type Gesture } from './motion/ambient.ts';
+import { mountObsession } from './presentation/obsession.ts';
 import { mountPluginIsland } from './plugins/island.ts';
 import { gazeOffset, islandFrame, remainingProgress } from './presentation/island.ts';
 import { actionsVisible } from './presentation/controls.ts';
 import { clockRefreshDelay } from './presentation/clock.ts';
 import { updateText, type UpdateStatus } from './presentation/update.ts';
-import { locale } from './i18n/index.ts';
-import { initializePreferences } from './preferences/index.ts';
+import { locale, t } from './i18n/index.ts';
+import { initializePreferences, preferences } from './preferences/index.ts';
 import './style.css';
 
 interface CompanionState {
@@ -49,12 +50,11 @@ function renderPluginProgress(value: number | null): void {
   const progress = remainingProgress(value);
   for (const ring of statusRings) {
     ring.toggleAttribute('hidden', progress === null);
-    const arc = ring.querySelector<SVGCircleElement>('.ring-progress')!;
+    const arc = ring.querySelector<SVGPathElement>('.ring-progress')!;
     arc.setAttribute('stroke-dashoffset', String(100 - (progress ?? 0) * 100));
     arc.style.visibility = progress !== null && progress > 0 ? 'visible' : 'hidden';
   }
 }
-const pluginIsland = mountPluginIsland(pluginContainer, renderPluginProgress);
 const motion = new PanelMotion();
 const tuckMotion = new PanelMotion();
 const preference = matchMedia('(prefers-reduced-motion: reduce)');
@@ -74,6 +74,7 @@ let gestures: Animation[] = [];
 function animateGesture(gesture: Gesture | null): void {
   for (const animation of gestures) animation.cancel();
   gestures = [];
+  if (gesture && obsession.ownsEyes) return;
   const animate = (selector: string, frames: Keyframe[], duration: number) => {
     for (const element of document.querySelectorAll<HTMLElement>(selector)) {
       gestures.push(element.animate(frames, { duration, easing: 'ease-in-out' }));
@@ -100,13 +101,31 @@ const ambient = new AmbientMotion({
   set: (callback, delay) => setTimeout(callback, delay),
   clear: handle => clearTimeout(handle as ReturnType<typeof setTimeout> | undefined),
 }, animateGesture);
-function refreshAmbient(): void {
+const obsession = mountObsession(panel, mascot, t, syncAmbient);
+const pluginIsland = mountPluginIsland(pluginContainer, renderPluginProgress,
+  () => obsession.timerCancelled(), () => obsession.timerStarted(),
+  () => obsession.timerCompleted(), () => obsession.timerPaused(), () => obsession.timerBreakStarted(),
+  running => obsession.setFocusRunning(running));
+function syncAmbient(): void {
   ambient.setMode(state.visible && !document.hidden && !state.reducedMotion && !preference.matches
+    && !preferences().obsession && !obsession.ownsEyes
     && state.presentation !== 'expanded' ? state.presentation : null);
-  if (!state.visible || document.hidden || state.presentation !== 'eyes' || state.reducedMotion || preference.matches) {
+  if (!state.visible || document.hidden || state.presentation !== 'eyes' || state.reducedMotion || preference.matches
+    || obsession.ownsEyes) {
     gaze.style.setProperty('--gaze-x', '0px');
     gaze.style.setProperty('--gaze-y', '0px');
   }
+}
+function refreshAmbient(): void {
+  obsession.setActivity(preferences().obsessionActivity);
+  obsession.setState({
+    enabled: preferences().obsession,
+    visible: state.visible && !document.hidden,
+    reducedMotion: state.reducedMotion || preference.matches,
+    presentation: state.presentation,
+    transitionId: state.transitionId,
+  });
+  syncAmbient();
 }
 tuckMotion.setExpanded(true, 0, false);
 
@@ -218,6 +237,7 @@ function refreshClock(): void {
     clock.textContent = time;
     clock.dateTime = now.toISOString();
   }
+  obsession.clockChanged(String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0'));
   date.textContent = new Intl.DateTimeFormat(locale(), { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).format(now);
   date.dateTime = now.toISOString();
   const delay = clockRefreshDelay(now, state.visible, document.hidden, state.presentation);
@@ -244,18 +264,19 @@ function applyState(next: CompanionState): void {
   motion.setExpanded(next.expanded, now, animate);
   tuckMotion.setExpanded(!next.visible || next.presentation === 'strip', now, animate);
   render(performance.now());
-  refreshClock();
   refreshAmbient();
+  refreshClock();
   pluginIsland.setVisible(!document.hidden && next.visible && next.expanded && !pluginContainer.hidden, progressVisible());
 }
 
 preference.addEventListener('change', () => applyState(state));
 document.addEventListener('visibilitychange', () => {
-  refreshClock();
   refreshAmbient();
+  refreshClock();
   pluginIsland.setVisible(!document.hidden && state.visible && state.expanded && !pluginContainer.hidden, progressVisible());
 });
 window.addEventListener('pagehide', () => {
+  obsession.dispose();
   ambient.setMode(null);
   pluginIsland.dispose();
   clearTimeout(clockTimer);
@@ -264,15 +285,32 @@ window.addEventListener('pagehide', () => {
 async function start(): Promise<void> {
   await mascot.decode();
   await initializePreferences(() => {
+    refreshAmbient();
     refreshClock();
     pluginIsland.refreshLocale();
+    obsession.refreshLocale();
     if (updateState) applyUpdate(updateState);
   });
   let receivedState = false;
   await listen<[number, number]>('pivo:gaze', event => {
-    if (!state.visible || document.hidden || state.presentation !== 'eyes' || state.reducedMotion || preference.matches) return;
+    if (!state.visible || document.hidden || state.presentation !== 'eyes' || state.reducedMotion || preference.matches
+      || obsession.ownsEyes) return;
     gaze.style.setProperty('--gaze-x', `${gazeOffset(event.payload[0])}px`);
     gaze.style.setProperty('--gaze-y', `${gazeOffset(event.payload[1])}px`);
+  });
+  await listen<{ target: 'mascot' | 'clock' | 'none'; x: number; y: number; transitionId: number }>('pivo:companion-pointer', event => {
+    if (event.payload.transitionId !== state.transitionId) return;
+    const pointer = event.payload;
+    const origin = panel.getBoundingClientRect();
+    const clock = document.querySelector<HTMLElement>('.header-status .clock')!.getBoundingClientRect();
+    const overClock = pointer.x >= clock.left - origin.left && pointer.x < clock.right - origin.left
+      && pointer.y >= clock.top - origin.top && pointer.y < clock.bottom - origin.top;
+    obsession.pointer({ ...pointer, target: overClock ? 'clock' : pointer.target === 'clock' ? 'none' : pointer.target });
+  });
+  await listen('pivo:resume', () => obsession.resume());
+  await listen<{ x: number; y: number; transitionId: number }>('pivo:companion-double-click', event => {
+    if (event.payload.transitionId !== state.transitionId) return;
+    obsession.doubleClick(event.payload);
   });
   await listen<CompanionState>('pivo:state', event => {
     receivedState = true;

@@ -144,6 +144,24 @@ async fn pivo_set_compact_mode(
 
 #[cfg(windows)]
 #[tauri::command]
+async fn pivo_set_obsession(
+    app: tauri::AppHandle,
+    enabled: bool,
+) -> Result<platform::preferences::Preferences, String> {
+    platform::preferences::set_obsession(&app, enabled)
+}
+
+#[cfg(windows)]
+#[tauri::command]
+async fn pivo_set_obsession_activity(
+    app: tauri::AppHandle,
+    activity: String,
+) -> Result<platform::preferences::Preferences, String> {
+    platform::preferences::set_obsession_activity(&app, activity)
+}
+
+#[cfg(windows)]
+#[tauri::command]
 fn pivo_get_displays() -> Result<Vec<app::displays::Display>, String> {
     platform::displays::list()
 }
@@ -186,6 +204,8 @@ fn main() {
             pivo_set_locale,
             pivo_set_theme,
             pivo_set_compact_mode,
+            pivo_set_obsession,
+            pivo_set_obsession_activity,
             pivo_get_displays,
             pivo_set_display,
             pivo_set_automatic_updates,

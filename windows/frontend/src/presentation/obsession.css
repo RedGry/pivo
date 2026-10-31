@@ -1,0 +1,139 @@
+.obsession-parts {
+  position: absolute;
+  left: var(--image-x);
+  top: var(--image-y);
+  width: var(--image-size);
+  height: var(--image-size);
+  opacity: var(--reveal, 0);
+  transform-origin: 50% 56%;
+  pointer-events: none;
+}
+.obsession-parts *, .obsession-caption { pointer-events: none; }
+.obsession-body-backs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.obsession-body-backs svg { display: block; width: 100%; height: 100%; }
+.obsession-eye-backs {
+  position: absolute;
+  left: var(--eye-x);
+  top: var(--eye-y);
+  opacity: var(--reveal, 0);
+  pointer-events: none;
+}
+.obsession-eye-backs span {
+  position: absolute;
+  top: 0;
+  width: calc(var(--eye-width) + 3px);
+  height: calc(var(--eye-height) + 3px);
+  border-radius: 50%;
+  background: #202022;
+  transform: translate(-50%, -50%);
+}
+.obsession-eye-backs span:first-child { left: calc(var(--eye-spacing) / -2); }
+.obsession-eye-backs span:last-child { left: calc(var(--eye-spacing) / 2); }
+.obsession-hand {
+  position: absolute;
+  top: 59.8%;
+  width: 14.5%;
+  height: 12.5%;
+  overflow: hidden;
+  border-radius: 50%;
+  transform-origin: 50% 65%;
+}
+.obsession-left { left: 13.2%; }
+.obsession-right { left: 72.7%; }
+.obsession-hand img {
+  position: absolute;
+  display: block;
+  width: var(--image-size);
+  height: var(--image-size);
+  max-width: none;
+  top: calc(var(--image-size) * -.598);
+}
+.obsession-left img { left: calc(var(--image-size) * -.132); }
+.obsession-right img { left: calc(var(--image-size) * -.727); }
+.obsession-heart-source {
+  /* Keep the same eye centers while replacing only the baked pupils. */
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1254 1254'%3E%3Cdefs%3E%3Cmask id='h'%3E%3Cpath fill='white' d='M0 0h1254v1254H0z'/%3E%3Cg fill='black'%3E%3Cellipse cx='556' cy='699' rx='42' ry='64'/%3E%3Cellipse cx='695' cy='699' rx='42' ry='64'/%3E%3C/g%3E%3C/mask%3E%3C/defs%3E%3Cpath fill='white' mask='url(%23h)' d='M0 0h1254v1254H0z'/%3E%3C/svg%3E");
+}
+.obsession-source {
+  /* Remove only the original eyes and hands while their finite, asset-derived parts move. */
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1254 1254'%3E%3Cdefs%3E%3Cmask id='m'%3E%3Cpath fill='white' d='M0 0h1254v1254H0z'/%3E%3Cg fill='black'%3E%3Cellipse cx='253' cy='828' rx='94' ry='83'/%3E%3Cellipse cx='1000' cy='828' rx='94' ry='83'/%3E%3Cellipse cx='556' cy='699' rx='42' ry='64'/%3E%3Cellipse cx='695' cy='699' rx='42' ry='64'/%3E%3C/g%3E%3C/mask%3E%3C/defs%3E%3Cpath fill='white' mask='url(%23m)' d='M0 0h1254v1254H0z'/%3E%3C/svg%3E");
+}
+.obsession-face { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.obsession-smile, .obsession-brow, .obsession-breath { stroke: #eee; stroke-width: 8; stroke-linecap: round; opacity: 0; }
+.obsession-smile { stroke-width: 5; }
+.obsession-brow { stroke: #777; stroke-width: 12; }
+.obsession-breath { stroke-width: 5; }
+.obsession-twig { stroke: #ab8967; stroke-width: 12; stroke-linecap: round; opacity: 0; }
+.obsession-twig-left, .obsession-twig-right { transform-origin: 627px 792px; }
+.obsession-caption {
+  position: absolute;
+  top: 128px;
+  left: 25px;
+  width: 175px;
+  max-height: 30px;
+  overflow: hidden;
+  text-align: center;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 14px;
+  opacity: 0;
+}
+.panel[data-obsession-pose] .mascot { transform-origin: 50% 56%; }
+.panel[data-obsession-pose] .eyes {
+  /* The compositor normally uses baked PNG eyes in Expanded; cues mask those original eyes. */
+  opacity: calc(var(--eye-opacity, 0) + var(--reveal, 0));
+}
+.panel[data-obsession-pose] .eyes i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #fff;
+  opacity: var(--reveal, 0);
+}
+.panel[data-obsession-pose] .gaze { transform: none; transition: none; }
+.panel[data-obsession-pose='waited'][data-expanded='false'] .obsession-caption {
+  top: 26px;
+  left: 0;
+  width: 180px;
+  font-size: 9px;
+  line-height: 12px;
+}
+
+.panel[data-obsession-enabled='true'] .eyes {
+  opacity: calc(var(--eye-opacity, 0) + var(--reveal, 0));
+}
+.panel[data-obsession-enabled='true'] .eyes i {
+  width: calc(var(--eye-width) * 1.3);
+  height: var(--eye-height);
+  border-radius: 0;
+  clip-path: polygon(50% 17%, 62% 4%, 77% 0, 91% 10%, 100% 28%, 99% 45%, 89% 61%, 50% 100%, 11% 61%, 1% 45%, 0 28%, 9% 10%, 23% 0, 38% 4%);
+  background: #e7b3ef;
+}
+.panel[data-obsession-enabled='true'] .eyes i::after { background: #e7b3ef; }
+.obsession-notebook, .obsession-visit-card, .obsession-thread, .obsession-rings, .obsession-compatibility, .obsession-gift-heart { opacity: 0; }
+.obsession-thread { stroke: #c69adf; stroke-width: 11; stroke-linecap: round; stroke-dasharray: 1200; }
+.obsession-rings { stroke: #dec1ed; stroke-width: 13; transform-origin: 627px 886px; }
+.obsession-compatibility text { font-size: 110px; font-weight: 700; }
+.obsession-gift-heart { fill: #d39be4; transform-origin: 627px 880px; }
+.obsession-small-heart { fill: #efb5da; }
+
+.obsession-visit-card text { font-size: 105px; font-weight: 700; }
+.obsession-tea, .obsession-binoculars, .obsession-bouquet, .obsession-mended-heart { opacity: 0; }
+.obsession-binoculars { transform-origin: 627px 701px; }
+.obsession-bouquet { transform-origin: 627px 1040px; }
+.obsession-mended-heart { transform-origin: 627px 880px; }
+.obsession-plaster { opacity: 0; }
+.obsession-sandwich { transform-origin: 627px 860px; }
+.obsession-kiss-mouth, .obsession-kiss-heart, .obsession-drawn-hearts { opacity: 0; }
+.obsession-kiss-mouth { stroke: #efb5da; stroke-width: 8; stroke-linecap: round; }
+.obsession-kiss-heart { fill: #efb5da; transform-origin: 654px 790px; }
+.obsession-drawn-heart { stroke: #efb5da; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 100; }
+.obsession-encourage, .obsession-juggle, .obsession-activity-reading, .obsession-activity-writing, .obsession-activity-coding { opacity: 0; }
+.obsession-encourage-label { font-size: 72px; font-weight: 650; }
+.obsession-encourage, .obsession-activity-reading, .obsession-activity-writing, .obsession-activity-coding { transform-origin: 627px 1040px; }
+.obsession-juggle-left, .obsession-juggle-right { transform-origin: center; transform-box: fill-box; }

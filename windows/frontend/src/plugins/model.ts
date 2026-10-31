@@ -123,6 +123,12 @@ export function resetTimer(entry: Entry): Timer {
   const mode = timerFor(entry).mode;
   return { remaining: duration(entry, mode), deadline: null, mode };
 }
+/** Switching modes cancels an unfinished running or paused countdown; pause alone does not. */
+export function timerActionCancels(entry: Entry, action: string, now: number): boolean {
+  if (entry.manifest.kind !== 'timer' || action !== 'secondary' || !entry.timer) return false;
+  const timer = entry.timer;
+  return secondsLeft(timer, now) > 0 && (timer.deadline !== null || timer.remaining < duration(entry, timer.mode));
+}
 export function timerAction(entry: Entry, action: 'primary' | 'secondary', now: number): Timer {
   const timer = timerFor(entry);
   if (action === 'secondary') {

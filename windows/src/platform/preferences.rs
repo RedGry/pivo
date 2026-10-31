@@ -1,7 +1,7 @@
 pub use crate::app::preferences::Preferences;
 use crate::app::{
     localization::Catalog,
-    preferences::{CompactMode, Theme},
+    preferences::{CompactMode, ObsessionActivity, Theme},
 };
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
@@ -34,6 +34,8 @@ pub fn setup(app: &tauri::AppHandle) -> Result<(), String> {
         },
         theme: Theme::saved(&saved("theme")),
         compact_mode: CompactMode::saved(&saved("compact-mode")),
+        obsession: crate::app::preferences::saved_obsession(&saved("obsession")),
+        obsession_activity: ObsessionActivity::saved(&saved("obsession-activity")),
     };
     app.manage(Mutex::new(State {
         catalog,
@@ -128,6 +130,31 @@ pub fn set_compact_mode(app: &tauri::AppHandle, value: String) -> Result<Prefere
     save(app, "compact-mode", mode.as_str(), |preferences| {
         preferences.compact_mode = mode
     })
+}
+
+pub fn set_obsession(app: &tauri::AppHandle, enabled: bool) -> Result<Preferences, String> {
+    save(
+        app,
+        "obsession",
+        if enabled { "true" } else { "false" },
+        |preferences| preferences.obsession = enabled,
+    )
+}
+
+pub fn set_obsession_activity(
+    app: &tauri::AppHandle,
+    value: String,
+) -> Result<Preferences, String> {
+    let activity = ObsessionActivity::parse(&value)
+        .ok_or_else(|| text(app, "errors.obsessionActivityUnsupported"))?;
+    save(
+        app,
+        "obsession-activity",
+        activity.as_str(),
+        |preferences| {
+            preferences.obsession_activity = activity;
+        },
+    )
 }
 
 pub fn set_display(app: &tauri::AppHandle, display: String) -> Result<Preferences, String> {

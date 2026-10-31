@@ -8,9 +8,11 @@ export interface Preferences {
   theme: 'system' | 'light' | 'dark';
   compactMode: 'auto' | 'eyes' | 'strip';
   display: string;
+  obsession: boolean;
+  obsessionActivity: 'reading' | 'writing' | 'coding';
 }
 
-let current: Preferences = { revision: -1, locale: 'en', theme: 'dark', compactMode: 'auto', display: 'primary' };
+let current: Preferences = { revision: -1, locale: 'en', theme: 'dark', compactMode: 'auto', display: 'primary', obsession: false, obsessionActivity: 'reading' };
 const systemTheme = matchMedia('(prefers-color-scheme: dark)');
 export const preferences = () => current;
 

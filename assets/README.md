@@ -13,3 +13,7 @@
 - Purpose: static mascot artwork for the first Windows prototype.
 
 The Tauri frontend bundles this PNG during its build. Rebuild the frontend and application after replacing it. `windows/icons/icon.ico` is a format/size derivative generated from the same PNG by the Tauri CLI; the character artwork is unchanged and the same asset terms apply. Keep ownership, provenance and file metadata current when changing assets.
+
+## Runtime expressions
+
+The optional Obsession presentation reuses crops of the approved PNG for moving hands and masks the fixed eyes/hands to avoid duplicates. Those rendered parts, including the two notebook portraits, remain derivatives of the original mascot under the same asset terms. Heart eyes, smile, brow, twig, breath, thread, notebook, counter, rings, compatibility card, cups, binoculars, bouquet, repaired heart, kiss, drawn hearts, sandwich, encouragement sign, juggling hearts, shared-activity book/paper/computer and gift details are authored directly in the presentation code for this project. The mode's timing and situations follow the project owner's requested film references; the repository bundles no film frames, actor likenesses or recorded dialogue.

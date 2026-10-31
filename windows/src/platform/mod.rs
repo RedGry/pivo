@@ -6,7 +6,7 @@ pub mod update;
 mod visibility;
 
 use crate::app::{
-    Companion, PendingPointer, PointerDwell, Presentation, ViewState, geometry, scale,
+    Companion, DoubleClick, PendingPointer, PointerDwell, Presentation, ViewState, geometry, scale,
 };
 use std::{
     cell::Cell,
@@ -41,6 +41,23 @@ const VISIBILITY_SETTLE: usize = 4;
 const UPDATE_ACTION: u32 = WM_APP + 20;
 const CONTROL_ACTION: u32 = WM_APP + 21;
 
+#[derive(Clone, Copy, PartialEq, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct CompanionPointer {
+    target: geometry::CompanionTarget,
+    x: f64,
+    y: f64,
+    transition_id: u32,
+}
+
+#[derive(Clone, Copy, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct CompanionDoubleClick {
+    x: f64,
+    y: f64,
+    transition_id: u32,
+}
+
 struct Native {
     app: tauri::AppHandle,
     window: HWND,
@@ -52,7 +69,9 @@ struct Native {
     plugin_buttons: [HWND; 4],
     plugin_enabled: Cell<bool>,
     last_gaze: Cell<Option<(i16, i16)>>,
+    last_companion_pointer: Cell<Option<CompanionPointer>>,
     pending: Cell<PendingPointer>,
+    double_click: Cell<DoubleClick>,
     hover: Cell<PointerDwell>,
     exit: Cell<PointerDwell>,
     visibility_settle_until: Cell<f64>,
@@ -116,6 +135,7 @@ impl Native {
         self.cancel_hover();
         self.cancel_exit();
         self.pending.set(PendingPointer::default());
+        self.double_click.set(DoubleClick::default());
         unsafe {
             KillTimer(self.window, SAMPLE);
         }
@@ -205,6 +225,7 @@ impl Native {
         if force || previous != Some(state) {
             let _ = self.app.emit("pivo:state", state);
         }
+        self.observe_companion(state);
         state
     }
     fn refresh(&self) {
@@ -240,6 +261,7 @@ impl Native {
         if self.closed.get() || self.anchoring.replace(true) {
             return;
         }
+        self.double_click.set(DoubleClick::default());
         let requested = preferences::get(&self.app).display;
         if let Some(monitor) = displays::chosen(&requested) {
             unsafe {
@@ -375,6 +397,83 @@ impl Native {
         self.point()
             .is_some_and(|(x, y)| geometry::bounds(presentation).contains(x, y))
     }
+    fn companion_pointer(&self, state: ViewState) -> Option<CompanionPointer> {
+        (state.visible
+            && state.presentation == Presentation::Expanded
+            && !self.anchoring.get()
+            && preferences::get(&self.app).obsession
+            && self.presentation_ready(Presentation::Expanded))
+        .then(|| self.point())
+        .flatten()
+        .map(|(x, y)| CompanionPointer {
+            target: geometry::companion_target(x, y),
+            x,
+            y,
+            transition_id: state.transition_id,
+        })
+    }
+    fn observe_companion(&self, state: ViewState) {
+        let observation = self.companion_pointer(state);
+        if state.reduced_motion
+            || observation.is_none_or(|pointer| pointer.target != geometry::CompanionTarget::Mascot)
+        {
+            self.double_click.set(DoubleClick::default());
+        }
+        if let Some(pointer) = observation {
+            if self.last_companion_pointer.replace(Some(pointer)) != Some(pointer) {
+                let _ = self.app.emit("pivo:companion-pointer", pointer);
+            }
+        } else if self.last_companion_pointer.take().is_some() {
+            let _ = self.app.emit(
+                "pivo:companion-pointer",
+                CompanionPointer {
+                    target: geometry::CompanionTarget::None,
+                    x: 0.0,
+                    y: 0.0,
+                    transition_id: state.transition_id,
+                },
+            );
+        }
+    }
+    fn observe_left_press(&self, state: ViewState) {
+        let Some(pointer) = self.companion_pointer(state).filter(|pointer| {
+            pointer.target == geometry::CompanionTarget::Mascot && !state.reduced_motion
+        }) else {
+            self.double_click.set(DoubleClick::default());
+            return;
+        };
+        let mut cursor = POINT::default();
+        if unsafe { GetCursorPos(&mut cursor) } == 0 {
+            self.double_click.set(DoubleClick::default());
+            return;
+        }
+        let dpi = unsafe { GetDpiForWindow(self.window) };
+        let extent = unsafe {
+            (
+                GetSystemMetricsForDpi(SM_CXDOUBLECLK, dpi),
+                GetSystemMetricsForDpi(SM_CYDOUBLECLK, dpi),
+            )
+        };
+        let mut clicks = self.double_click.get();
+        let paired = clicks.press(
+            self.now(),
+            cursor.x,
+            cursor.y,
+            f64::from(unsafe { GetDoubleClickTime() }) / 1000.0,
+            extent,
+        );
+        self.double_click.set(clicks);
+        if paired {
+            let _ = self.app.emit(
+                "pivo:companion-double-click",
+                CompanionDoubleClick {
+                    x: pointer.x,
+                    y: pointer.y,
+                    transition_id: state.transition_id,
+                },
+            );
+        }
+    }
     fn over_reveal(&self) -> bool {
         let presentation = self.snapshot().presentation;
         presentation != Presentation::Expanded
@@ -401,6 +500,7 @@ impl Native {
     }
     fn observe(&self, pressed: bool) {
         let state = self.snapshot();
+        self.observe_companion(state);
         if !state.visible {
             return;
         }
@@ -513,7 +613,9 @@ pub fn install(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>>
             plugin_buttons: [previous, next, primary, secondary],
             plugin_enabled: Cell::new(false),
             last_gaze: Cell::new(None),
+            last_companion_pointer: Cell::new(None),
             pending: Cell::new(PendingPointer::default()),
+            double_click: Cell::new(DoubleClick::default()),
             hover: Cell::new(PointerDwell::default()),
             exit: Cell::new(PointerDwell::default()),
             visibility_settle_until: Cell::new(0.0),
@@ -662,17 +764,25 @@ unsafe extern "system" fn window_proc(
             WM_MOUSEACTIVATE => MA_NOACTIVATE as LRESULT,
             WM_NCHITTEST => HTTRANSPARENT as LRESULT,
             WM_INPUT => {
-                if native.snapshot().visible
-                    && let Some(pressed) = mouse::buttons_down(lp)
+                let state = native.snapshot();
+                if state.visible
+                    && let Some(packet) = mouse::packet(lp)
                 {
-                    if pressed {
+                    if packet.pressed {
                         native.cancel_hover();
                         if native.over_control() {
+                            native.double_click.set(DoubleClick::default());
                             return DefSubclassProc(window, message, wp, lp);
                         }
                     }
+                    if packet.left_down {
+                        // Observe every press before movement coalescing can combine two clicks.
+                        native.observe_left_press(state);
+                    } else if packet.pressed {
+                        native.double_click.set(DoubleClick::default());
+                    }
                     let mut pending = native.pending.get();
-                    if pending.queue(pressed, native.now())
+                    if pending.queue(packet.pressed, native.now())
                         && SetTimer(window, SAMPLE, 10, None) == 0
                     {
                         pending = PendingPointer::default();
@@ -749,16 +859,20 @@ unsafe extern "system" fn window_proc(
                 0
             }
             WM_POWERBROADCAST => {
+                let mut resumed = false;
                 native.update(|state| {
                     if wp as u32 == PBT_APMSUSPEND {
-                        state.suspended = true;
+                        state.set_suspended(true);
                     }
                     if matches!(wp as u32, PBT_APMRESUMEAUTOMATIC | PBT_APMRESUMESUSPEND) {
-                        state.suspended = false;
+                        resumed = state.set_suspended(false);
                     }
                 });
                 native.refresh();
                 native.publish(true);
+                if resumed {
+                    let _ = native.app.emit("pivo:resume", ());
+                }
                 DefSubclassProc(window, message, wp, lp);
                 1
             }
