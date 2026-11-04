@@ -235,3 +235,11 @@ The later progress requirement binds the ring to real active-plugin timer data. 
 - Cause: the viewport width and the frontend state could update on different frames. The outgoing card also inherited the new widget's layout rules.
 - Improvement: pin the island position to the client origin and scope the card layout to the widget itself. Document the intermediate-frame acceptance check in DESIGN.md.
 - Verification: Windows validation passed. The runtime probe navigated six widget tabs with a fixed window origin and restored Music. Lyrics was closed in the captures.
+
+## 2026-11-04: Release presentation and current screenshots
+
+- Correction: the 0.2.0 release retained outdated README screenshots and milestone text, and six broad release bullets hid the scope of the accumulated changes. The user requested detailed What's new and Install sections and Dark-theme README captures.
+- Cause: the release preparation checklist covered versions, changelog presence, signing and validation, but did not require a review of the README images or a complete user-facing release narrative.
+- Improvement: add a Release presentation checklist to `docs/UPDATES.md`: refresh version-matched README captures and their provenance, describe accumulated features by useful behavior, and include installation/update instructions. Published release prose can be corrected without changing immutable tags or assets.
+- Result: rewrite README for the released feature set, replace its six captures with actual published 0.2.0 Dark/English images, and expand the changelog and release description to 25 substantive feature bullets with installation and validation sections.
+- Verification: all six Dark captures were visually inspected and matched the original MCP capture hashes. README local targets, release-note section boundaries, the three release-metadata tests and `git diff --check` passed. Application gates were not rerun for documentation-only changes.

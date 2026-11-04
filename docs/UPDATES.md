@@ -32,6 +32,17 @@ The updater signature confirms that an update was signed by PivO's key. It is se
 6. The workflow publishes the complete draft as the latest release only after all checks, signed packaging and asset uploads succeed. A failed build does not publish a release.
 7. Verify the published installer in a disposable Windows account or VM. Publishing makes its manifest available at the app's update endpoint; it does not establish the installed-version upgrade acceptance below.
 
+### Release presentation
+
+Before tagging, update the public presentation alongside the binaries:
+
+- Refresh README download links, feature descriptions and screenshots from the version being released. Remove obsolete milestone text and record the capture version, date and provenance in `docs/images/README.md`.
+- Write **What's new** and **Install** sections. Group accumulated changes by user-facing feature, explain useful behavior and preserve important compatibility or dependency requirements. Do not reduce a large release to a few generic category bullets.
+- In `CHANGELOG.md`, keep the version heading at level two and use level-three section headings so the release extractor retains the complete entry. Installation instructions must cover the Windows x64 setup file, the existing installed-update path and first installation for portable copies.
+- Check the rendered README images and release description before publication. Separate verified behavior from known limits, and link the validation record where appropriate.
+
+Release-description prose and repository documentation may be corrected after publication. Published tags, installers, signatures and updater manifests remain immutable; changing the application requires a new version.
+
 The manifest points to the immutable versioned installer URL. Keep published installer and signature files unchanged. Rebuilding a version and replacing its files can invalidate the signature or mix files downloaded by clients; publish a new version instead. This workflow intentionally does not replace an existing release when rerun: inspect the failed run and existing draft before retrying.
 
 Before the first published release, the endpoint may return HTTP 404; that is an unavailable update feed, not evidence that PivO is up to date. The feed must remain publicly downloadable without a GitHub login.

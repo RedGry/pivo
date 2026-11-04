@@ -1,13 +1,18 @@
 # README screenshots
 
-These are unmodified, application-only Windows captures from the separate PivO debug MCP on 2026-10-30. They show the current compact interaction and plugin candidate in Russian, including the expanded 560 x 160 island, compact Strip and Appearance settings. Screenshots document appearance; they do not establish acceptance of every native interaction. See [validation](../VALIDATION.md) for actual test coverage.
+These are unmodified, application-only captures of the published PivO 0.2.0 Windows x64 executable, taken through the separate PivO debug MCP on 2026-11-04. The executable SHA-256 is `6181A1AF2368CA47BCEE62AD5A5804DA406322DD147F5C4C76A6860EB271B5BC`, matching the payload in the published signed installer.
+
+The captures show English and Dark theme in a disposable Windows guest. Expanded uses the built-in Pomodoro with its default 25-minute focus session. Settings shows the current Appearance, Mascot and Calendar pages. Window captures retain their transparent canvas padding.
 
 | Published file | Original capture |
 | --- | --- |
-| `island-expanded.png` | `native-gear-after-main.png` |
-| `island-strip.png` | `native-gear-after-strip.png` |
-| `settings-appearance.png` | `native-settings-default-appearance.png` |
+| `island-expanded.png` | `.local/release-0.2.0/readme-captures-dark/expanded-pomodoro.png` |
+| `island-strip.png` | `.local/release-0.2.0/readme-captures-dark/compact-strip.png` |
+| `island-eyes.png` | `.local/release-0.2.0/readme-captures-dark/compact-eyes.png` |
+| `settings-appearance.png` | `.local/release-0.2.0/readme-captures-dark/settings-appearance.png` |
+| `settings-mascot.png` | `.local/release-0.2.0/readme-captures-dark/settings-mascot.png` |
+| `settings-calendar.png` | `.local/release-0.2.0/readme-captures-dark/settings-calendar.png` |
 
-Each image was inspected before inclusion. They contain only PivO's own interface, with no desktop, unrelated windows, account information or secrets.
+Each image was inspected before inclusion. The images contain PivO's own interface and default or public calendar data. Screenshots document appearance; see [validation](../VALIDATION.md) for actual interaction checks and test-environment limits.
 
-The README mascot uses the approved original `assets/mascot.png`. Ownership and provenance are recorded in [assets/README.md](../../assets/README.md). Artwork and screenshots containing the mascot remain subject to [LICENSE-ASSETS.md](../../LICENSE-ASSETS.md); the code's MIT license does not grant separate mascot or branding rights.
+The mascot is the current vector presentation of the approved PivO character. Ownership and provenance are recorded in [assets/README.md](../../assets/README.md). Artwork and screenshots containing the mascot remain subject to [LICENSE-ASSETS.md](../../LICENSE-ASSETS.md); the code's MIT license does not grant separate mascot or branding rights.
