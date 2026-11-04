@@ -66,6 +66,81 @@ impl CompactMode {
     }
 }
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum MascotSize {
+    Small,
+    #[default]
+    Medium,
+    Large,
+}
+
+impl MascotSize {
+    pub fn saved(value: &str) -> Self {
+        match value {
+            "small" => Self::Small,
+            "large" => Self::Large,
+            _ => Self::Medium,
+        }
+    }
+
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Small => "small",
+            Self::Medium => "medium",
+            Self::Large => "large",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum MascotProp {
+    Music,
+    Pomodoro,
+    Water,
+    Tasks,
+    Calendar,
+    Shelf,
+    Hud,
+    Hat,
+    Scarf,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PropSkin {
+    Classic,
+    #[serde(alias = "mint")]
+    Alternate,
+    #[serde(alias = "sunset")]
+    Signature,
+}
+
+pub type PropSkins = std::collections::BTreeMap<MascotProp, PropSkin>;
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum HolidayMode {
+    #[default]
+    Off,
+    Auto,
+    Winter,
+    Love,
+    Spring,
+    Summer,
+    Autumn,
+    Spooky,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+pub struct HolidayPreferences {
+    pub outfit: HolidayMode,
+    pub appearance: HolidayMode,
+    #[serde(default)]
+    pub variants: std::collections::BTreeMap<String, PropSkin>,
+}
+
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Preferences {
@@ -74,6 +149,14 @@ pub struct Preferences {
     pub display: String,
     pub theme: Theme,
     pub compact_mode: CompactMode,
+    pub island_scale: u16,
+    pub minimal_strip: bool,
+    pub mascot_size: MascotSize,
+    pub mascot_motion: bool,
+    pub mascot_hat: bool,
+    pub mascot_scarf: bool,
+    pub prop_skins: PropSkins,
+    pub holidays: HolidayPreferences,
 }
 
 #[cfg(test)]
@@ -88,6 +171,30 @@ mod tests {
         assert!(Theme::parse("invalid").is_none());
         assert!(CompactMode::parse("invalid").is_none());
     }
+    #[test]
+    fn prop_skins_round_trip_independently() {
+        let skins = PropSkins::from([
+            (MascotProp::Music, PropSkin::Alternate),
+            (MascotProp::Water, PropSkin::Signature),
+        ]);
+        let saved = serde_json::to_string(&skins).unwrap();
+        let loaded: PropSkins = serde_json::from_str(&saved).unwrap();
+        assert_eq!(loaded, skins);
+        assert!(!loaded.contains_key(&MascotProp::Calendar));
+        let legacy: PropSkins =
+            serde_json::from_str(r#"{"music":"mint","water":"sunset"}"#).unwrap();
+        assert_eq!(legacy, loaded);
+    }
+
+    #[test]
+    fn mascot_size_round_trips_and_defaults_for_existing_installations() {
+        assert_eq!(MascotSize::saved(""), MascotSize::Medium);
+        assert_eq!(MascotSize::saved("unknown"), MascotSize::Medium);
+        for size in [MascotSize::Small, MascotSize::Medium, MascotSize::Large] {
+            assert_eq!(MascotSize::saved(size.as_str()), size);
+        }
+    }
+
     #[test]
     fn auto_uses_occlusion_while_explicit_compact_choices_override_it() {
         use super::super::Presentation::*;

@@ -7,26 +7,33 @@
   </head>
   <body>
     <header class="titlebar" data-tauri-drag-region>
-      <div class="titlebar-brand" data-tauri-drag-region><img class="title-icon" alt="" draggable="false" /><span data-tauri-drag-region>PivO</span><span class="title-divider" data-tauri-drag-region> / </span><span data-i18n="settings.title" data-tauri-drag-region>Settings</span></div>
+      <div class="titlebar-brand" data-tauri-drag-region><img class="title-icon" alt="" draggable="false" /><span data-tauri-drag-region>PivO</span><span class="title-divider" data-tauri-drag-region> / </span><span data-i18n="settings.title" data-tauri-drag-region>Settings</span><span class="holiday-title-icon" data-holiday-art="icon" aria-hidden="true" hidden></span></div>
       <div class="caption-actions">
         <button id="minimize" data-i18n-aria="controls.minimize" data-i18n-title="controls.minimize" aria-label="Minimize"><svg viewBox="0 0 16 16"><path d="M3 8.5h10"/></svg></button>
         <button id="maximize" data-i18n-aria="controls.maximize" data-i18n-title="controls.maximize" aria-label="Maximize"><svg viewBox="0 0 16 16"><path d="M3.5 3.5h9v9h-9z"/></svg></button>
         <button id="close-settings" class="caption-close" data-i18n-aria="controls.closeSettings" data-i18n-title="controls.closeSettings" aria-label="Close settings"><svg viewBox="0 0 16 16"><path d="m3.5 3.5 9 9m0-9-9 9"/></svg></button>
       </div>
     </header>
+    <div class="settings-holiday-rail" data-holiday-art="garland" aria-hidden="true" hidden></div>
     <div class="workspace">
       <aside class="sidebar">
         <div class="sidebar-label" data-i18n="settings.title">Settings</div>
         <nav role="tablist" aria-orientation="vertical" data-i18n-aria="settings.sections">
           <button role="tab" id="tab-appearance" aria-controls="page-appearance" aria-selected="true" data-section="appearance"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span data-i18n="settings.appearance">Appearance</span></button>
+          <button role="tab" id="tab-mascot" aria-controls="page-mascot" aria-selected="false" tabindex="-1" data-section="mascot"><svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 0 1 16 0v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M9 13v2m6-2v2"/></svg><span data-i18n="settings.mascot">Mascot</span></button>
           <button role="tab" id="tab-behavior" aria-controls="page-behavior" aria-selected="false" tabindex="-1" data-section="behavior"><svg viewBox="0 0 24 24"><path d="M3 5h18M5 5v9a7 7 0 0 0 14 0V5"/><path d="M9 11v3m6-3v3"/></svg><span data-i18n="settings.behavior">Island</span></button>
-          <button role="tab" id="tab-plugins" aria-controls="page-plugins" aria-selected="false" tabindex="-1" data-section="plugins"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg><span data-i18n="plugins.title">Plugins</span></button>
+          <button role="tab" id="tab-pomodoro" aria-controls="page-pomodoro" aria-selected="false" tabindex="-1" data-section="pomodoro"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg><span data-i18n="widgets.pomodoro">Pomodoro</span></button>
           <button role="tab" id="tab-updates" aria-controls="page-updates" aria-selected="false" tabindex="-1" data-section="updates"><svg viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 0 8M20 3v5h-5"/></svg><span data-i18n="settings.updates">Updates</span></button>
           <button role="tab" id="tab-about" aria-controls="page-about" aria-selected="false" tabindex="-1" data-section="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v7m0-11v1"/></svg><span data-i18n="settings.about">About</span></button>
         </nav>
         <div class="sidebar-footer"><span class="brand">PivO</span><span id="sidebar-version"></span></div>
       </aside>
       <main>
+        <div class="settings-holiday-scene" aria-hidden="true" hidden>
+          <span class="holiday-scene-art" data-holiday-scene="left"></span>
+          <span class="holiday-scene-symbol" data-holiday-art="icon" hidden></span>
+          <span class="holiday-scene-art" data-holiday-scene="right"></span>
+        </div>
         <section class="page" id="page-appearance" role="tabpanel" aria-labelledby="tab-appearance">
           <header class="page-heading"><h1 data-i18n="settings.appearance">Appearance</h1><p data-i18n="settings.appearanceDescription">Choose the look and language of PivO.</p></header>
           <div class="page-body">
@@ -37,18 +44,65 @@
                 <label class="theme-choice"><input type="radio" name="theme" id="theme-dark" value="dark"/><span><i class="theme-preview dark-preview" aria-hidden="true"></i><b data-i18n="settings.themeDark">Dark</b></span></label>
               </div>
             </div>
-            <div class="setting-group setting-row"><div class="setting-copy"><label for="language" data-i18n="settings.language">Language</label><p data-i18n="settings.languageDescription">Changes apply to the panel, settings and tray menu.</p></div><select id="language" disabled></select></div>
+            <div class="setting-group setting-row"><div class="setting-copy"><label for="language" data-i18n="settings.language">Language</label><p data-i18n="settings.languageDescription">Changes apply to the panel, settings and tray menu.</p></div><div class="language-picker"><span id="language-flag" aria-hidden="true"></span><select id="language" disabled></select></div></div>
+              <div class="setting-group setting-row">
+                <label for="holiday-appearance" data-i18n="settings.holidayAppearance">Holiday interface</label>
+                <select id="holiday-appearance" disabled></select>
+              </div>
+          </div>
+        </section>
+        <section class="page" id="page-mascot" role="tabpanel" aria-labelledby="tab-mascot" hidden>
+          <header class="page-heading"><h1 data-i18n="settings.mascot">Mascot</h1><p data-i18n="settings.mascotDescription">Choose clothing, movement, and the look of each item.</p></header>
+          <div class="page-body">
+            <div class="mascot-wardrobe">
+              <div class="mascot mascot-portrait" id="mascot-portrait" aria-hidden="true"></div>
+              <div class="mascot-options">
+            <div class="setting-group setting-row">
+              <label for="mascot-size" data-i18n="settings.mascotSize">Size</label>
+              <select id="mascot-size" disabled>
+                <option value="small" data-i18n="settings.mascotSizeSmall">Small</option>
+                <option value="medium" data-i18n="settings.mascotSizeMedium">Medium</option>
+                <option value="large" data-i18n="settings.mascotSizeLarge">Large</option>
+              </select>
+            </div>
+            <div class="setting-group setting-row">
+              <div class="setting-copy"><label for="mascot-motion" data-i18n="settings.mascotMotion">Mascot animation</label><p data-i18n="settings.mascotMotionDescription">Play eye expressions and widget reactions.</p></div>
+              <input id="mascot-motion" type="checkbox" disabled>
+            </div>
+              </div>
+            </div>
+            <h2 data-i18n="settings.mascotClothes">Clothing</h2>
+            <div class="mascot-prop-grid mascot-clothing-grid" id="mascot-clothes"></div>
+            <h2 data-i18n="settings.mascotProps">Mascot items</h2>
+            <div class="mascot-prop-grid" id="mascot-props"></div>
+            <section class="mascot-holidays">
+              <h2 data-i18n="settings.holidays">Holidays</h2>
+              <p data-i18n="settings.holidaysDescription">Apply a seasonal outfit or interface theme by date, or choose one to keep on.</p>
+              <div class="setting-group setting-row">
+                <label for="holiday-outfit" data-i18n="settings.holidayOutfit">Holiday outfit</label>
+                <select id="holiday-outfit" disabled></select>
+              </div>
+              <div class="holiday-outfit-editor">
+                <div class="mascot mascot-portrait holiday-outfit-preview" id="holiday-outfit-preview" aria-hidden="true"></div>
+                <div class="holiday-outfit-controls">
+                  <label for="holiday-occasion" data-i18n="settings.holidayOccasion">Occasion</label>
+                  <select id="holiday-occasion"></select>
+                  <label for="holiday-variant" data-i18n="settings.holidayVariant">Outfit style</label>
+                  <select id="holiday-variant" disabled></select>
+                </div>
+              </div>
+            </section>
           </div>
         </section>
         <section class="page" id="page-behavior" role="tabpanel" aria-labelledby="tab-behavior" hidden>
           <header class="page-heading"><h1 data-i18n="settings.behavior">Island</h1><p data-i18n="settings.behaviorDescription">Choose what remains visible when the island is folded.</p></header>
-          <div class="page-body"><div class="setting-group setting-row"><div class="setting-copy"><label for="display" data-i18n="settings.display">Display</label><p data-i18n="settings.displayDescription">Use the primary display if the selected screen is disconnected.</p></div><select id="display" disabled></select></div><h2 data-i18n="settings.compact">Folded appearance</h2><div class="mode-choices">
+          <div class="page-body"><div class="setting-group display-picker"><div class="setting-row"><div class="setting-copy"><label id="display-label" for="display" data-i18n="settings.display">Display</label><p data-i18n="settings.displayDescription">Use the primary display if the selected screen is disconnected.</p></div><select id="display" disabled></select></div><div id="display-layout" role="group" aria-labelledby="display-label" hidden></div></div><div class="setting-group"><div class="setting-row"><label for="island-scale" data-i18n="settings.islandScale">Island size</label><select id="island-scale"><option value="0" data-i18n="settings.compactAuto">Automatic</option><option value="100">100%</option><option value="115">115%</option><option value="130">130%</option><option value="150">150%</option></select></div><div class="setting-row"><div class="setting-copy"><label for="minimal-strip" data-i18n="settings.minimalStrip">Minimal strip</label><p data-i18n="settings.minimalStripDescription">In Automatic mode, reduce the strip over windows when there are no lyrics on screen.</p></div><label class="switch"><input id="minimal-strip" type="checkbox" role="switch" disabled/><span class="switch-track" aria-hidden="true"></span></label></div></div><h2 data-i18n="settings.compact">Folded appearance</h2><div class="mode-choices">
             <label class="mode-choice"><input type="radio" name="compact-mode" id="compact-auto" value="auto"/><span class="mode-card"><i class="mode-preview auto-preview" aria-hidden="true"><b></b><b></b></i><span><strong data-i18n="settings.compactAuto">Automatic</strong><small data-i18n="settings.compactAutoDescription">Eyes when unobstructed; a small strip over windows.</small></span><i class="choice-mark" aria-hidden="true"></i></span></label>
             <label class="mode-choice"><input type="radio" name="compact-mode" id="compact-eyes" value="eyes"/><span class="mode-card"><i class="mode-preview" aria-hidden="true"><b></b><b></b></i><span><strong data-i18n="settings.compactEyes">Always show eyes</strong><small data-i18n="settings.compactEyesDescription">Keep the character visible over other windows.</small></span><i class="choice-mark" aria-hidden="true"></i></span></label>
             <label class="mode-choice"><input type="radio" name="compact-mode" id="compact-strip" value="strip"/><span class="mode-card"><i class="mode-preview strip-preview" aria-hidden="true"></i><span><strong data-i18n="settings.compactStrip">Always use the strip</strong><small data-i18n="settings.compactStripDescription">Only a hint at the top edge.</small></span><i class="choice-mark" aria-hidden="true"></i></span></label>
-          </div><p class="footnote" data-i18n="settings.behaviorNote">Use the eyes or top-edge hint to reveal the island.</p><div class="setting-group"><h2 data-i18n="plugins.orderTitle">Plugin order</h2><p data-i18n="plugins.orderDescription">Choose the order of enabled island pages.</p><div id="plugin-order"></div></div></div>
+          </div><p class="footnote" data-i18n="settings.behaviorNote">Use the eyes or top-edge hint to reveal the island.</p></div>
         </section>
-        <section class="page" id="page-plugins" role="tabpanel" aria-labelledby="tab-plugins" hidden><header class="page-heading"><h1 data-i18n="plugins.title">Plugins</h1><p data-i18n="plugins.description">Choose and reorder island pages.</p></header><div class="page-body" id="plugin-manager"></div></section>
+        <section class="page" id="page-pomodoro" role="tabpanel" aria-labelledby="tab-pomodoro" hidden><header class="page-heading"><h1 data-i18n="widgets.pomodoro">Pomodoro</h1><p data-i18n="plugins.pomodoroDescription">Focus sessions and short breaks.</p></header><div class="page-body" id="plugin-manager"></div></section>
         <section class="page" id="page-updates" role="tabpanel" aria-labelledby="tab-updates" hidden>
           <header class="page-heading"><h1 data-i18n="settings.updates">Updates</h1><p data-i18n="settings.updatesDescription">Stay up to date on your terms.</p></header>
           <div class="page-body"><div class="setting-group setting-row"><div class="setting-copy"><label for="automatic-updates" data-i18n="settings.automaticUpdates">Check for updates automatically</label><p data-i18n="settings.automaticDescription">On launch and every six hours; installation needs your approval.</p></div><label class="switch"><input id="automatic-updates" type="checkbox" role="switch" disabled/><span class="switch-track" aria-hidden="true"></span></label></div>
@@ -57,8 +111,19 @@
           </div>
         </section>
         <section class="page" id="page-about" role="tabpanel" aria-labelledby="tab-about" hidden>
-          <header class="page-heading"><h1 data-i18n="settings.about">About</h1><p data-i18n="settings.aboutDescription">A desktop companion for Windows.</p></header>
-          <div class="page-body"><div class="about-card"><img class="companion" alt="" draggable="false"/><h2>PivO</h2><p id="version"></p></div><p class="footnote" data-i18n="settings.license">Code: MIT. Artwork and branding: rights reserved.</p></div>
+          <header class="page-heading"><h1 data-i18n="settings.about">About</h1></header>
+          <div class="page-body">
+            <div class="about-card"><img class="about-icon" alt="" draggable="false"/><h2>PivO</h2><p id="version"></p><p data-i18n="settings.aboutDescription">A desktop companion for Windows.</p></div>
+            <section class="about-info" aria-labelledby="about-info-title">
+              <h2 id="about-info-title" data-i18n="settings.aboutInfo">Info</h2>
+              <dl>
+                <div><dt data-i18n="settings.aboutWebsite">Website</dt><dd><a href="https://github.com/RedGry/pivo" data-about-link="website">github.com/RedGry/pivo</a></dd></div>
+                <div><dt data-i18n="settings.aboutLyrics">Lyrics</dt><dd><a href="https://lrclib.net" data-about-link="lyrics">LRCLIB</a></dd></div>
+                <div><dt data-i18n="settings.aboutAuthor">Made by</dt><dd>RedGry</dd></div>
+              </dl>
+              <p data-i18n="settings.license">Code: MIT. Artwork and branding: rights reserved.</p>
+            </section>
+          </div>
         </section>
         <p id="error" role="alert" hidden></p>
       </main>

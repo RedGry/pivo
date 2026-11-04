@@ -1,13 +1,13 @@
 {
   "name": "pivo-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "license": "MIT",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 1420 --strictPort",
     "typecheck": "tsc --noEmit",
-    "test": "node --test src/motion/panel.test.ts src/i18n/catalog.test.ts src/presentation/island.test.ts src/presentation/controls.test.ts src/presentation/clock.test.ts src/motion/ambient.test.ts src/plugins/model.test.ts src/plugins/icons.test.ts",
+    "test": "node --test src/motion/panel.test.ts src/motion/widgets.test.ts src/presentation/holidays.test.ts src/settings/holiday-nav.test.ts src/widgets/personal/calendar-holidays.test.ts src/widgets/notice.test.ts src/i18n/catalog.test.ts src/presentation/island.test.ts src/presentation/artwork.test.ts src/presentation/controls.test.ts src/presentation/clock.test.ts src/motion/ambient.test.ts src/plugins/model.test.ts src/plugins/icons.test.ts src/widgets/personal/model.test.ts src/widgets/media/lyrics.test.ts src/widgets/media/lyric-alignment.test.ts src/widgets/media/seek.test.ts src/widgets/media/playback.test.ts src/widgets/media/provider.test.ts src/widgets/media/lyrics-lookup.test.ts src/widgets/shelf/rows.test.ts src/widgets/personal/water.test.ts src/widgets/personal/mount.test.ts src/widgets/personal/task-reorder.test.ts",
     "build": "npm run typecheck && vite build",
     "desktop:dev": "cd .. && tauri dev",
     "desktop:build": "cd .. && tauri build --no-bundle"

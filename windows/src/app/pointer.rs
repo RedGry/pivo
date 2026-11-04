@@ -1,4 +1,5 @@
 const SAMPLE_DELAY_SECONDS: f64 = 0.010;
+pub const HOVER_DELAY_SECONDS: f64 = 0.020;
 
 #[derive(Clone, Copy, Default)]
 pub struct PendingPointer {
@@ -51,9 +52,52 @@ impl PointerDwell {
     }
 }
 
+/// Collect high-resolution wheel packets into whole Windows wheel detents.
+#[derive(Default, Clone, Copy)]
+pub struct Wheel(i32);
+
+impl Wheel {
+    pub fn add(&mut self, delta: i16) -> i32 {
+        let total = self.0 + i32::from(delta);
+        self.0 = total % 120;
+        total / 120
+    }
+}
+
+pub fn shelf_drop_visible(shelf_ready: bool, left_held: bool, file_drag_active: bool) -> bool {
+    shelf_ready && (left_held || file_drag_active)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn file_target_survives_button_release_until_ole_finishes() {
+        assert!(shelf_drop_visible(true, true, false));
+        assert!(shelf_drop_visible(true, false, true));
+        assert!(!shelf_drop_visible(true, false, false));
+        assert!(!shelf_drop_visible(false, true, true));
+    }
+
+    #[test]
+    fn partial_wheel_packets_accumulate_and_reversals_cancel() {
+        let mut wheel = Wheel::default();
+        assert_eq!(wheel.add(40), 0);
+        assert_eq!(wheel.add(40), 0);
+        assert_eq!(wheel.add(-20), 0);
+        assert_eq!(wheel.add(60), 1);
+        assert_eq!(wheel.add(-250), -2);
+        assert_eq!(wheel.add(10), 0);
+    }
+
+    #[test]
+    fn deliberate_reveal_starts_after_20_milliseconds() {
+        let mut hover = PointerDwell::default();
+        assert!(hover.arm(0.0, HOVER_DELAY_SECONDS));
+        assert!(hover.remaining_ms(0.019).unwrap() > 0);
+        assert_eq!(hover.remaining_ms(0.020), Some(0));
+    }
 
     #[test]
     fn dwell_keeps_first_deadline_and_reentry_starts_a_full_delay() {
@@ -67,17 +111,6 @@ mod tests {
         // A queued timer from the cancelled hover cannot open the new hover early.
         assert!(dwell.remaining_ms(1.5).unwrap() >= 250);
         assert_eq!(dwell.remaining_ms(1.751), Some(0));
-    }
-
-    #[test]
-    fn exit_grace_is_cancelled_by_returning_inside() {
-        let mut exit = PointerDwell::default();
-        assert!(exit.arm(0.0, 0.200));
-        assert!(!exit.arm(0.1, 0.200));
-        exit = PointerDwell::default();
-        assert_eq!(exit.remaining_ms(0.201), None);
-        assert!(exit.arm(0.3, 0.200));
-        assert_eq!(exit.remaining_ms(0.501), Some(0));
     }
 
     #[test]

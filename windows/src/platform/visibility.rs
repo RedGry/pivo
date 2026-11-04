@@ -104,7 +104,11 @@ unsafe extern "system" fn changed(
     }
 }
 
-pub unsafe fn compact_occluded(panel: HWND, monitor: &super::displays::Monitor) -> bool {
+pub unsafe fn compact_occluded(
+    panel: HWND,
+    monitor: &super::displays::Monitor,
+    ui_scale: f64,
+) -> bool {
     struct Search {
         panel: HWND,
         footprint: RECT,
@@ -186,7 +190,8 @@ pub unsafe fn compact_occluded(panel: HWND, monitor: &super::displays::Monitor) 
     }
     unsafe {
         let dpi = monitor.dpi;
-        let width = crate::app::scale(crate::app::geometry::COMPACT_WIDTH, dpi);
+        let width =
+            crate::app::geometry::physical(crate::app::geometry::COMPACT_WIDTH, dpi, ui_scale);
         let left = monitor.bounds.left + (monitor.bounds.right - monitor.bounds.left - width) / 2;
         let mut search = Search {
             panel,
@@ -195,7 +200,11 @@ pub unsafe fn compact_occluded(panel: HWND, monitor: &super::displays::Monitor) 
                 top: monitor.bounds.top,
                 right: left + width,
                 bottom: monitor.bounds.top
-                    + crate::app::scale(crate::app::geometry::COMPACT_HEIGHT, dpi),
+                    + crate::app::geometry::physical(
+                        crate::app::geometry::COMPACT_HEIGHT,
+                        dpi,
+                        ui_scale,
+                    ),
             },
             found: false,
         };

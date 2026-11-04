@@ -129,3 +129,128 @@ The previous renderer's build, input, resource and real Windows scaling observat
 ## Distribution
 
 The portable application must contain the built executable, code/asset terms, THIRD_PARTY_NOTICES.md and the complete licenses directory. The frontend and approved mascot are embedded. The WebView2 Runtime remains a documented Windows prerequisite. Compare archived executable and notice hashes before handoff.
+
+## Full HD feedback candidate (2026-11-02)
+
+- `pwsh -NoProfile -File scripts/validate.ps1` passed outside the sandbox using the local Rust toolchain and npm cache: 37 frontend tests, 27 Rust tests, frontend build, formatting, Clippy and release build. An initial sandboxed npm install stalled and was interrupted before any checks completed.
+- Separate pivo-debug launched the release executable and reported a visible 480 x 144 physical-pixel client on the selected monitor, without foreground ownership. A synthetic compatibility click revealed the island; capture showed the mascot, clock and Pomodoro. This does not prove real hover, click-through or timing.
+- Both host displays reported 2560 x 1440 at 100% scaling. The private `--verify-tauri-input` driver rejected the current canvas with `Unexpected Tauri canvas bounds`; its fixture expects the older 360 x 190 geometry. Native input and Settings interaction were not established.
+- `scripts/testing/start-sandbox.ps1` generated a read-only payload and requested launch, reporting `Launched: True`. A subsequent process query found no WindowsSandbox process. Guest boot, WebView2, 1920 x 1080, 125% DPI and guest tests remain unverified. Multi-monitor transitions, fullscreen, actual resume and motion timing were not rechecked in this batch.
+- Follow-up diagnosis: reading `Containers-DisposableClientVM` with `Get-WindowsOptionalFeature -Online` failed with an elevation-required error, even outside the execution sandbox. Administrator access is required to establish the host feature state; no Windows features or reboot settings were changed.
+
+## Monitor-aware scaling candidate (2026-11-02)
+
+- Final `scripts/validate.ps1` passed frontend tests and build, Rust formatting, Clippy and 30 Rust tests. Its release build could not replace the running previous executable (Windows error 5). After a normal MCP close, the affected locked release build was rerun and passed; evidence is `.local/validation-monitor-scale.log` and `.local/validation-monitor-release-retry.log`.
+- On the 2560 x 1440 selected monitor at 100% DPI, the fresh release process reported a visible 560 x 168 client without foreground ownership. Public MCP captures showed the compact eyes and clock, and a synthetic click revealed the mascot, clock and Pomodoro. These captures do not establish native hover, pointer forwarding or motion timing.
+- Full HD, 125% DPI, real multi-monitor transitions, fullscreen, sleep/resume, Settings interaction, and Windows Sandbox guest boot remain unverified. The private native fixture still targets 360 x 190 and cannot validate this candidate.
+
+## Windows guest and native-input follow-up (2026-11-02)
+
+- The user confirmed Windows Sandbox is Enabled. The installed `wsb` CLI identified the owned guest `a47245d3-3e33-4b67-9beb-8ac7739526f4`; guest execution and a dedicated evidence share work. This supersedes the earlier unconfirmed-boot result.
+- The initial guest measured 2032 x 1111 at 96 DPI. Its driver did not advertise 1920 x 1080. Resizing only the owned Sandbox client to an outer 1936 x 1121 (including its border and toolbar) produced independently measured 1920 x 1080 at 96 DPI. Host monitor resolution and DPI were unchanged. Evidence: `.local/sandbox/58c1d679b5c94e3c9408cde4c6bffcaa/results/viewport-fullhd.json`.
+- The offline Microsoft WebView2 installer signature verified. Guest registration already contained the documented WebView2 product identifier with a positive version, under the display name `Microsoft EdgeWebView`. The launcher now detects by identifier/version and skips unnecessary installation. Regression tests cover the actual label and missing/invalid registrations.
+- The reviewed isolated native helper passed against the actual host QHD PivO process in Strip mode: deliberate hover, separate-process decorative click-through, interior clicks staying open, exit grace cancellation, old-body non-reveal, fresh reveal and foreground retention. The fixture counted two actual clicks; readiness took 542 and 543 ms, including dwell, animation and acknowledgment. This is not direct compositor timing or Eyes-mode acceptance. Evidence: `.local/native-monitor-aware-result.log`.
+- The first guest MCP smoke matched the Full HD profile but could not initialize its helper. Exit code 0xC0000135 and PE imports identify a test-tool runtime dependency (`VCRUNTIME140.dll`); the PivO executable does not import that DLL. Early-helper-exit diagnostics now retain stderr and exit code. The later static-CRT helper resolved the dependency; no application changes were required for this tool issue.
+
+## Final Full HD guest acceptance
+
+- The repeatable wrapper completed with independently measured 1920 x 1080, one display and 96 DPI. The exact application hash remained E52B99791D4B30BC8902DD5B0AF14F2ADCCFF640EEC0DDFD7EA0E839E4532A23. Native hover, separate-process decorative click-through, interior-click retention, exit grace, old-body non-reveal, fresh reveal and foreground retention passed in Eyes mode; clean application exit passed.
+- Windows Sandbox's default reduced-motion policy was read as client-area animations disabled. The native-ready Expanded PNG was visually inspected: 480 x 144, original mascot, aligned date/time header, Pomodoro value and action labels without overflow. Evidence: `.local/sandbox/df8d20e1da6c4b8782ff02a48de8c6e1/results/`.
+- The same Full HD batch passed with client-area animations enabled only inside the disposable guest. Reveal readiness measured 614 and 645 ms, including dwell, animation and frame acknowledgment; these are not compositor frame timings. The expanded PNG was visually inspected. The guest's original animation value 0 was restored and independently read back. Evidence: `.local/sandbox/a634112630264c36b105d2b5297ac478/results/`.
+- Only the native-ready image is named `expanded-candidate.png`. The public compatibility click did not establish reveal in this guest; its image is separately named `after-synthetic-candidate.png`. Earlier synthetic-only capture claims are superseded by these verified native captures.
+- Guest runtime discovery was independently diagnosed with Microsoft's loader API: default lookup returned 0x80070002 while the explicit installed folder returned version 156.0.4314.58. The guest-only environment override allowed the unchanged application to initialize. No host runtime, registry or display settings changed.
+- Native Settings gear activation opened the actual host Settings window. Its cleanup restored the cursor but Windows did not restore the previous foreground, so that complete fixture attempt is not counted as a pass. A separate exact-window WGC capture was visually inspected: the sidebar contains Pomodoro and no plugin import manager. Capture extent 862 x 642 includes the non-client frame; client size is 860 x 640. Evidence: `.local/settings-monitor-aware.png` and `.local/settings-monitor-aware-result-2.log`. Live duration-form edits were not exercised.
+- The final isolated helper passed formatting, Clippy, 14 tests and static release build. Its actual Settings capture was checked; application source was unchanged after the previously successful application gate. Tracked guest transport/staging/runtime regression checks cover UTF-8/BOM, early exits, startup readiness, unique guest mappings, target ID binding and native evidence gating.
+- Coverage limits remain explicit: 125% native DPI, real selected-monitor transitions/reconnect, fullscreen and actual sleep/resume were not exercised in this batch. The two host monitors remained 2560 x 1440 at 100%. The Sandbox viewport remains at the verified Full HD size; its PivO test process exited normally, and the host application remains running for inspection.
+- The user confirmed that Windows Display settings in this Sandbox session do not expose scale selection. No 125% result is claimed; the wrapper still accepts a separately configured 125% profile and verifies the actual measured DPI.
+
+## Built-in widget acceptance
+
+- The complete application gate passed with 43 frontend tests, 33 Rust tests, TypeScript, formatting, Clippy and the locked release build. The tested application SHA-256 is `67E7A7C91A43EF1BEF0A9375F382B27A66520829D8CBEE8EBF4444DA9C55576A`.
+- Seven native Next clicks on the actual 2560 x 1440 host cycled through all seven pages and returned to the initial Pomodoro page with its saved countdown. The fixture restored the cursor and retained the foreground window. Eight inspected captures are in `.local/widget-navigation/`. Music read the current Windows media session. HUD reported real host volume, brightness and input language.
+- A deliberate native gear click opened Settings. The exact-window capture in `.local/widget-navigation/settings.png` shows the seven widget tabs. The fixture restored the cursor and foreground. Individual Settings forms and file picker actions were not exercised in this batch.
+- The Windows Sandbox batch matched 1920 x 1080 at 100%. Native reveal, separate-process click-through, foreground retention, dismissal and normal exit passed. Expanded capture and reports are in `.local/sandbox/24d368e2a99d4faf935694da7252e4ab/results/`.
+- LRC parsing, calendar and reminder calculations, shelf capacity and HUD conversions have automated coverage. Live playback actions, delivery at real reminder deadlines, hardware transitions, 125% DPI, fullscreen and sleep/resume were not exercised for this candidate.
+
+## Nusa-inspired widget presentation
+
+- The application gate passed with 43 frontend tests, 33 Rust tests, TypeScript, formatting, Clippy and the locked release build. Executable SHA-256 is `0782C67F3311B012B52036977A8EFC9A678EA9CA01BD6F8F1E39429130046778`.
+- On the 2560 x 1440 host at 100%, the private fixture captured page dots, their hover icons, native selection and the return to Pomodoro through the fourth slot. The host had six enabled widgets. The Next sequence reached each enabled card and retained foreground ownership. A native gear click opened Settings and the exact-window capture shows the compact colored sidebar. Evidence is in `.local/nusa-layout/`.
+- The 1920 x 1080 Sandbox run at 100% showed all seven page indicators. Native hover, separate-process click-through, foreground retention, dismissal and normal exit passed. The Expanded capture was inspected. Evidence is in `.local/sandbox/97c5051df5e942bf8ed5e9bc16fa43aa/results/`.
+- The layout draws from the user-provided Settings references and the public Nusa preview. Widget cards render PivO data and use PivO artwork and glyphs. The Settings capture covers the sidebar and Appearance groups. Individual settings forms and 125% guest DPI were not exercised in this batch.
+
+### 2026-11-03 layout, Lyrics, and eye motion
+
+Release SHA-256 `1F00F6D0B581D18C6468246F11FD285CEF761E13F0C9C3869C2C57785DAAF362`.
+`pwsh -NoProfile -File scripts/validate.ps1` passed 46 frontend and 37 Rust tests, type checking, Clippy, and release build. The width transition test rejects old paint acknowledgments. The gaze regression covers pointer activity after gaze saturation.
+
+- QHD host at 96 DPI, 560 × 168 client. All six enabled pages selected through native targets. The Pomodoro PNG had zero nontransparent pixels in the two side columns below the top shoulder, and an opaque bottom center. Separate-process click-through, foreground retention, deliberate hover, exit grace, and stale-body rejection passed. Native readiness after hover was 570–572 ms including dwell and paint acknowledgment.
+- Windows Sandbox, 1920 × 1080 at 100%, 480 × 144 client. Eyes-mode native input, foreground retention, click-through, and normal exit passed. Native readiness was 183–186 ms in the guest. These durations are readiness measurements and do not establish compositor frame pacing.
+- Evidence is local under `.local/eyes-lyrics` and `.local/sandbox/24873992f1fb4f9e9ed35a698cb29c46/results`. Fractional guest DPI, monitor migration, fullscreen, and suspend/resume were outside this run.
+- The guest fixture registered a silent 120-second GSMTC session, selected a staged LRC through the verified PivO Settings-owned WebView2 dialog, and received the application's import confirmation. All seven pages were selected. Music with Lyrics measured 656 × 144 and Pomodoro measured 480 × 144, both at x=720, y=0 in the same process. The active line, neighboring lines, and player actions fit their own rows.
+- The synchronized text advanced from the middle cue at approximately 0:08 to the next cue at 0:58, past the fixture's 0:50 boundary. Screenshots are `goal-page-1.png` and `lyrics-later.png`. Backward cue selection was verified by the frontend unit test.
+- A separate Full HD Eyes capture used the same staged release with Windows client-area animation temporarily enabled in the guest. The private pivo-debug fixture collected 26 timestamped frames and triggered wake with guarded native pointer motion. The rendered eye height measured 12–13 pixels open, 7 during blink, 2 during sleep, then 6 in the asymmetric first wake frame and 12–13 after reopening. The initial guest animation preference was restored and verified. Frame captures are in `.local/eyes-lyrics/eyes-frames/`. Capture latency was roughly 290–450 ms, so this batch demonstrates visible pose transitions without measuring display frame pacing. The motion scheduler and continuity tests cover the behavior between those samples.
+- Compact shoulders and Strip expressions passed the release gate with 47 frontend and 37 Rust tests (SHA-256 `2F837A6C0A6EE57BF17D77A7654C84856C505CF4723C7A6A774317ABF85CB12E`). Inspected Eyes on Full HD and Strip on QHD over a contrasting background. A captured blink showed both mini eyes compressing while the clock stayed fixed. The scheduler test covers the single-eye wink. Full HD Sandbox native input and clean exit passed (`.local/sandbox/d29efa4cca8f447ca83dc402b40f8d50/results`).
+
+### 2026-11-03 music controls and widget compositions
+
+- The application gate passed 48 frontend and 38 Rust tests, TypeScript, Clippy, formatting and release build. The subsequent presentation-only refinements passed TypeScript and the locked release build. Final executable SHA-256 `9F68E2410FBC044E0AC969BA9DACA2794922259845FD454982CFBEFE8173C3E0`.
+- All seven pages were selected and visually inspected in Full HD Sandbox at 100%, and all six enabled host pages were inspected on QHD. The native guest input batch and normal exit passed. Screenshots are under `.local/sandbox/8b8dc085610d46e9985a82881044ce3f/results` and `.local/music-controls`.
+- The dedicated Lyrics control toggled the native canvas between 480 and 656 logical pixels. The first post-click seek capture displayed 1:00 and the corresponding lyric cue. The synthetic provider's raw position stayed near 12.1 seconds. A direct WinRT probe returned accepted but also left its timeline unchanged, so successful provider playback movement remains unverified. Tests cover stale seek reports and preview reconciliation.
+- The QHD artwork tint faded into the black outline. Pixel inspection of the revised capture found no bright partially transparent pixels in the lower perimeter, where the earlier capture showed a bright fringe.
+
+### Widget feedback, wheel navigation, and Shelf drop
+
+- The full gate passed 53 frontend and 39 Rust tests, type checking, Clippy, and locked release build. The final mascot spacing adjustment passed type checking and a second locked release build (SHA-256 `FB86152BF511D0202A11E2D9A3975B2C61857F68AF06F70891B6C31498CDCC7B`).
+- On the gate candidate, all seven Full HD Sandbox pages and six enabled QHD pages were captured. Native wheel over Music advanced and returned without changing foreground ownership. Full HD separate-process click-through and clean exit passed. A synthetic playing media session showed the new audio bars in both Strip and the Expanded header. A real charging battery was unavailable.
+- LRCLIB returned synchronized text for its public documentation example. Provider tests cover encoding, bounded responses, and transient failure. Lookup is opt-in and the user's track was not queried. Live Yandex Music lyrics availability remains unverified.
+- Shell fixture verified a real CF_HDROP object and delivered movement and button release to the Shelf target, but both Shell and direct OLE drag loops exceeded the guest deadline. The end-to-end drop and persistence check remains unverified.
+- Evidence is under `.local/sandbox/97e50de44c8a42a4971fbe41796d736e/results` and `.local/widget-input-status`.
+
+### Mascot presets, Music arrows, and wider Lyrics
+
+- Final validation passed 55 frontend and 40 Rust tests, TypeScript, Clippy, formatting, and locked release. Executable SHA-256 `AECE3D8DD172DBAEF6B10D5EBD79CC8A73D63817312277F83EB9F3BAD29B424C`.
+- Full HD Sandbox passed separate-process click-through and normal exit. The synthetic track with a locally imported LRC showed the wider Lyrics column. Both Music widget arrows navigated and returned without invoking track transport. The right arrow remains inside the standard footprint so shrinking the island cannot strand the cursor outside it. All seven widget slots were selected. Evidence is in `.local/sandbox/febe10eaab234b60805a74d01eff004f/results`.
+- Inspected six enabled QHD pages on the candidate before the arrow-anchor correction. The mascot remained clear of the page arrow. The sampled bottom-center pixel was opaque artwork tint, and the outer bottom corner was transparent. Evidence is in `.local/mascot-music-pages`.
+- Lyrics lookup uses album metadata and a bounded, normalized search fallback with opt-in. Tests cover ambiguous and inaccurate matches. The user's Yandex Music track was not queried. The guest used a local test LRC. Mascot setting defaults and motion are covered by tests. Interactive changes to every mascot setting and the full set of live gestures were not exercised in this batch.
+
+### Centered mascot, background layering, and expanded input
+
+- Final gate passed 55 frontend and 42 Rust tests, type checking, formatting, Clippy, and the locked release build. SHA-256 `9AF8F426C086B17F4FC748487F920E8D4E1B81F8467DD91CEC9D2948A4B80BB5`.
+- Final Full HD Sandbox passed the separate-process input test. Two interior clicks were received by the Expanded input surface and did not reach the other process. One outside click reached that process. Foreground ownership was retained, and all seven widget pages were selected. Evidence is in `.local/sandbox/5d90d04339634fd7bc6186c30739d91d/results`.
+- Final QHD captures show the mascot centered in its leading slot above the page arrow. Music tint reaches the lower edge behind the mascot and controls. The System preview capture from the preceding candidate shows its clipped light/dark background without the previous light seam.
+- Shelf has a dedicated card-size target and retains it after raw button release until OLE Drop or Leave. The guest fixture confirmed target visibility with a held button, then timed out in the OLE drag loop without confirming a stored file. A real Explorer drop remains unverified.
+
+### Shelf actions, task rows, and playback feedback
+
+- The final gate passed 56 frontend and 44 Rust tests, type checking, Clippy, formatting, and locked release build. SHA-256 `E87B0A08EEEECF1B5993718242146778F6DF783091AF7D386E0AFE2F3655ECCB`.
+- Full HD Sandbox passed native input and clean exit. A disposable task was created through Settings, its native island row was clicked, and Settings verified the change from Off to On. The Shelf Remove action removed only the disposable shortcut and preserved the source bytes.
+- The guest delivered the Shelf Open action but did not expose the exact disposable filename in Notepad. Launching the associated editor remains unverified. Dragging from a different widget through an actual Explorer drop and playback command latency in an external player were not exercised. The new playback test covers the immediate optimistic indicator and stale reports.
+- Results are in `.local/sandbox/6d7f606448804038a840b95244e1a7bd/results`.
+
+### 2026-11-03: Alignment and live lyrics
+
+- The static alignment fixture measured nine control layouts at 760, 920, 1440 and 2560 CSS pixels. The expanded Settings calendar was captured with the separate pivo-debug helper to confirm the event form baseline and retained navigation tile colors.
+- Rasterized 78 occasion outfits and verified the art stays inside the portrait view box. Verified distinct outfit options and colored calendar glyphs in frontend tests.
+- The user authorized the LRCLIB queries. It returned plain text for Drag Me and synchronized text for Snow in the Ocean. The rebuilt PivO displayed the synchronized lyrics from the running Yandex Music desktop session. Regression fixtures cover plain text, mismatched album metadata and overlapping requests after a track change.
+# Nusa motion comparison
+
+Window-only capture probes measured pointer-driven transitions on Windows. The repeat Nusa trace reached 5% and 90% of the opening width in 56 ms and 212 ms, and 8% of the closing travel in 55 ms. The PivO trace with the guarded native visibility updates measured 93 ms, 205 ms, and 163 ms at the same thresholds. These measurements include frame readout latency and each value describes one run.
+
+In an earlier PivO run with the three-stage curve, the median interval between captured frames with width changes of at least five pixels was 16.7 ms and the 95th percentile was 20.8 ms. The repeat Nusa trace gave the same rounded values. Closing response remains the largest measured gap. The probes run outside the application repository and retain numerical traces without recording video.
+
+Three subsequent runs per app timestamped pointer commands and captured frames on the same performance counter. PivO reached 5% opening in 83–100 ms, 90% opening in 187–197 ms, and 8% closing in 98–113 ms. Nusa reached the same thresholds in 38–42 ms, 192–193 ms, and 34–39 ms. The PivO build used a 20 ms entry dwell, a 15 ms exit dwell, and published transitions for visible panels before updating native controls. These ranges exclude frame readout latency. They include the time between submitting the pointer command and Windows delivering the resulting input.
+
+Reducing the PivO exit dwell to 10 ms brought its measured 8% closing threshold to 76–93 ms across three runs. A repeat with matching SendInput movement put Nusa at 34–36 ms in the two runs that crossed the threshold. One Nusa run did not cross it. The 10 ms PivO build passed the Windows validation script.
+
+On that build, a native click on a timed lyric advanced the paused media session from 0:07 to 0:18 and highlighted the selected line without focusing PivO. The Settings and About windows rendered with the new application icon. Selecting display 1 on the map moved the panel to the other physical monitor. Selecting the original display 2 restored its position.
+
+The later no-exit-dwell build reached 8% closing in 61–79 ms. Rapid pointer return to the compact target reversed the fold in 53–81 ms, compared with 98 ms in the earlier reversal trace. The later build passed validation with 96 frontend tests and 44 Rust tests. These figures describe that measured build and its monitor configuration.
+
+For motion acceptance, measure both a full open/close cycle and repeated early reversals on the same monitor. Record first visible motion separately from near-full travel and report capture cadence with the input-to-motion thresholds.
+
+### Panel layout and directional widget transitions
+
+- The Windows release build passed all 96 frontend tests, 44 Rust tests, type checking, formatting and Clippy.
+- One QHD window-only hover trace measured 110 ms to 5% opening and 198 ms to 90% opening. Two closing samples reached 8% in 57–67 ms. The expanded canvas was 560 by 182 physical pixels. The first-motion gap to the previously measured Nusa remains open. Evidence is in `.local/pivo-layout-hover.json`.
+- The Settings-opening probe exited with an access violation. The About and Settings changes, widget slides and compact lyric overflow were not visually accepted on this build. Fullscreen, resume and live mixed-DPI input were not exercised.

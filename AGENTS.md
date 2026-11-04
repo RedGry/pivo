@@ -28,7 +28,7 @@
 ### Git and releases
 
 - `main` is protected. Never push commits directly to it, force-push it, delete it or bypass protection. Merge through a pull request with the required `windows` CI check and resolved review conversations.
-- `release/0.1.0` is the active integration branch for development and bug fixes in the 0.1 line. Start work from its latest remote state, not from `main` or a release tag. Use `codex/<topic>` branches and pull requests into `release/0.1.0` for isolated work; a coordinator may commit agreed work directly to the integration branch.
+- `release/0.2.0` is the active integration branch for development and bug fixes in the 0.2 line. Start work from its latest remote state, not from `main` or a release tag. Use `codex/<topic>` branches and pull requests into `release/0.2.0` for isolated work; a coordinator may commit agreed work directly to the integration branch.
 - Check the current branch and working tree before editing. Preserve other agents' changes and coordinate shared checkout/build ownership before switching branches or running builds.
 - Promote a reviewed, validated integration branch to `main` through a pull request. Do not disable required checks or branch protection to complete a merge.
 - Do not use CI-skip markers on commits being promoted to `main`; the pull request must receive its required check result.

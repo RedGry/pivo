@@ -4,7 +4,7 @@ pub mod localization;
 mod pointer;
 pub mod preferences;
 
-pub use pointer::{PendingPointer, PointerDwell};
+pub use pointer::{HOVER_DELAY_SECONDS, PendingPointer, PointerDwell, Wheel, shelf_drop_visible};
 use preferences::CompactMode;
 use serde::{Deserialize, Serialize};
 
@@ -24,7 +24,24 @@ pub struct ViewState {
     pub presentation: Presentation,
     pub reduced_motion: bool,
     pub visible: bool,
+    pub manually_hidden: bool,
     pub transition_id: u32,
+    pub ui_scale: f64,
+    pub canvas_scale: f64,
+    pub expanded_width: i32,
+}
+
+impl ViewState {
+    pub fn keeps_compact_dwell(self, previous: Self) -> bool {
+        self.visible
+            && !self.expanded
+            && self.ui_scale != previous.ui_scale
+            && Self {
+                ui_scale: previous.ui_scale,
+                transition_id: previous.transition_id,
+                ..self
+            } == previous
+    }
 }
 
 #[derive(Default)]
@@ -37,6 +54,10 @@ pub struct Companion {
     pub reduced_motion: bool,
     pub compact_mode: CompactMode,
     pub occluded: bool,
+    pub ui_scale: f64,
+    pub lyrics: bool,
+    previous_lyrics: bool,
+    previous_ui_scale: f64,
     transition_id: u32,
     previous_presentation: Presentation,
     previous_visible: bool,
@@ -55,10 +76,17 @@ impl Companion {
         } else {
             self.compact_mode.presentation(self.occluded)
         };
-        if presentation != self.previous_presentation || visible != self.previous_visible {
+        let ui_scale = self.ui_scale.max(1.0);
+        if presentation != self.previous_presentation
+            || visible != self.previous_visible
+            || ui_scale != self.previous_ui_scale
+            || self.lyrics != self.previous_lyrics
+        {
             self.transition_id = self.transition_id.wrapping_add(1);
             self.previous_presentation = presentation;
             self.previous_visible = visible;
+            self.previous_ui_scale = ui_scale;
+            self.previous_lyrics = self.lyrics;
             self.presentation_acknowledged = None;
             self.update_acknowledged = None;
         }
@@ -70,7 +98,15 @@ impl Companion {
             presentation,
             reduced_motion: self.reduced_motion,
             visible,
+            manually_hidden: self.ready && self.user_hidden && !self.fullscreen && !self.suspended,
             transition_id: self.transition_id,
+            ui_scale,
+            canvas_scale: geometry::CANVAS_SCALE.max(ui_scale),
+            expanded_width: if self.lyrics {
+                geometry::LYRICS_WIDTH
+            } else {
+                geometry::WIDTH
+            },
         }
     }
 
@@ -140,13 +176,65 @@ pub fn dismiss_on_pointer_down(expanded: bool, inside: bool) -> bool {
     expanded && !inside
 }
 
-pub fn scale(value: i32, dpi: u32) -> i32 {
-    ((i64::from(value) * i64::from(dpi) + 48) / 96) as i32
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn compact_dwell_survives_only_a_scale_only_change() {
+        let mut companion = Companion {
+            ready: true,
+            ..Companion::default()
+        };
+        let before = companion.snapshot();
+        companion.ui_scale = 1.2;
+        let scaled = companion.snapshot();
+        assert!(scaled.keeps_compact_dwell(before));
+        companion.expanded = true;
+        companion.ui_scale = 1.3;
+        assert!(!companion.snapshot().keeps_compact_dwell(scaled));
+        companion.user_hidden = true;
+        assert!(!companion.snapshot().keeps_compact_dwell(scaled));
+    }
+
+    #[test]
+    fn lyrics_width_requires_a_new_paint_acknowledgment() {
+        let mut companion = Companion {
+            ready: true,
+            expanded: true,
+            ..Default::default()
+        };
+        let initial = companion.snapshot();
+        assert_eq!(initial.expanded_width, geometry::WIDTH);
+        assert!(companion.acknowledge_presentation(initial.transition_id, Presentation::Expanded));
+        companion.lyrics = true;
+        let wide = companion.snapshot();
+        assert_eq!(wide.expanded_width, geometry::LYRICS_WIDTH);
+        assert!(!companion.acknowledge_presentation(initial.transition_id, Presentation::Expanded));
+        assert!(companion.acknowledge_presentation(wide.transition_id, Presentation::Expanded));
+    }
+
+    #[test]
+    fn scale_changes_invalidate_painted_controls_and_stale_input() {
+        let mut companion = Companion {
+            ready: true,
+            expanded: true,
+            ..Default::default()
+        };
+        let original = companion.snapshot();
+        assert_eq!(original.ui_scale, 1.0);
+        assert!(companion.acknowledge_presentation(original.transition_id, Presentation::Expanded));
+        companion.ui_scale = 7.0 / 6.0;
+        let resized = companion.snapshot();
+        assert_eq!(resized.ui_scale, 7.0 / 6.0);
+        assert_ne!(original.transition_id, resized.transition_id);
+        assert!(!companion.presentation_ready(Presentation::Expanded));
+        assert!(
+            !companion.acknowledge_presentation(original.transition_id, Presentation::Expanded)
+        );
+        assert!(companion.acknowledge_presentation(resized.transition_id, Presentation::Expanded));
+        assert_eq!(companion.snapshot().transition_id, resized.transition_id);
+    }
 
     #[test]
     fn expanded_panel_dismisses_only_on_an_outside_press() {
@@ -352,10 +440,17 @@ mod tests {
         assert!(companion.snapshot().expanded);
         companion.user_hidden = true;
         companion.suspended = true;
-        assert!(!companion.snapshot().visible);
+        let suspended = companion.snapshot();
+        assert!(!suspended.visible);
+        assert!(!suspended.manually_hidden);
         companion.suspended = false;
-        assert!(!companion.snapshot().visible);
-        assert!(!companion.snapshot().expanded);
+        let manually_hidden = companion.snapshot();
+        assert!(!manually_hidden.visible);
+        assert!(manually_hidden.manually_hidden);
+        assert!(!manually_hidden.expanded);
+        companion.fullscreen = true;
+        assert!(!companion.snapshot().manually_hidden);
+        companion.fullscreen = false;
         companion.user_hidden = false;
         assert!(companion.snapshot().visible);
     }

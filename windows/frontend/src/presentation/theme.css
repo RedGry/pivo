@@ -21,3 +21,23 @@
     --island-surface: #1a171c; --eye-color: #ffffff;
   }
 }
+
+:root[data-holiday-theme="winter"] { --holiday-color: #6badd1; --holiday-secondary: #cc687d; }
+:root[data-holiday-theme="love"] { --holiday-color: #d77a9c; --holiday-secondary: #ad73ca; }
+:root[data-holiday-theme="spring"] { --holiday-color: #7caf89; --holiday-secondary: #dba2c1; }
+:root[data-holiday-theme="summer"] { --holiday-color: #60abb4; --holiday-secondary: #e7b46a; }
+:root[data-holiday-theme="autumn"] { --holiday-color: #cf9262; --holiday-secondary: #b1748b; }
+:root[data-holiday-theme="spooky"] { --holiday-color: #ab85d1; --holiday-secondary: #d6865a; }
+:root[data-holiday-theme] {
+  --holiday-highlight: color-mix(in srgb, var(--holiday-color) 67%, var(--text));
+  --page: color-mix(in srgb, light-dark(#f5f3f8, #17141d), var(--holiday-color) 4%);
+  --sidebar: color-mix(in srgb, light-dark(#fbf9fd, #1c1823), var(--holiday-color) 6%);
+  --surface: color-mix(in srgb, light-dark(#fff, #211c2a), var(--holiday-color) 5%);
+  --raised: color-mix(in srgb, light-dark(#f0ebf5, #2d2637), var(--holiday-color) 9%);
+  --accent: color-mix(in srgb, var(--holiday-color), var(--text) 55%);
+  --accent-wash: color-mix(in srgb, var(--surface), var(--holiday-color) 25%);
+  --focus: var(--accent);
+}
+
+[data-holiday-art] { pointer-events: none; }
+[data-holiday-art] svg { display: block; width: 100%; height: 100%; overflow: visible; }

@@ -64,20 +64,17 @@ export function restore(raw: string | null): PluginState {
   try {
     const data = JSON.parse(raw) as PluginState;
     if (!Array.isArray(data.entries) || data.entries.length > 30) return initialState();
-    const ids = new Set<string>();
-    const entries: Entry[] = data.entries.map(entry => {
-      const manifest = entry.manifest?.id === builtin.id ? builtin : parseManifest(entry.manifest);
-      if (ids.has(manifest.id)) throw new Error('Duplicate plugin');
-      ids.add(manifest.id);
-      const timer = entry.timer;
-      const validTimer = timer && Number.isFinite(timer.remaining) && timer.remaining >= 0 && timer.remaining <= 86400
-        && (timer.deadline === null || (Number.isFinite(timer.deadline) && timer.deadline > 0))
-        && (timer.mode === 'focus' || timer.mode === 'break');
-      return { manifest, enabled: entry.enabled === true, ...(entry.values ? { values: configuration(manifest.settings, entry.values) } : {}),
-        ...(validTimer ? { timer: { remaining: timer.remaining, deadline: timer.deadline, mode: timer.mode } } : {}) };
-    });
-    if (!ids.has(builtin.id)) entries.push({ manifest: builtin, enabled: false });
-    return { entries, selected: typeof data.selected === 'string' ? data.selected : builtin.id };
+    // Keep the legacy key and built-in timer, but never restore imported pages.
+    const saved = data.entries.find(entry => entry?.manifest?.id === builtin.id);
+    if (!saved) return initialState();
+    const timer = saved.timer;
+    const validTimer = timer && Number.isFinite(timer.remaining) && timer.remaining >= 0 && timer.remaining <= 86400
+      && (timer.deadline === null || (Number.isFinite(timer.deadline) && timer.deadline > 0))
+      && (timer.mode === 'focus' || timer.mode === 'break');
+    const entry: Entry = { manifest: builtin, enabled: saved.enabled === true,
+      ...(saved.values ? { values: configuration(builtin.settings, saved.values) } : {}),
+      ...(validTimer ? { timer: { remaining: timer.remaining, deadline: timer.deadline, mode: timer.mode } } : {}) };
+    return { entries: [entry], selected: builtin.id };
   } catch { return initialState(); }
 }
 export function secondsLeft(timer: Timer, now: number): number {

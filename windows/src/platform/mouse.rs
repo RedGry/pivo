@@ -37,7 +37,13 @@ impl Drop for MouseInput {
     }
 }
 
-pub unsafe fn buttons_down(message: LPARAM) -> Option<bool> {
+pub struct Packet {
+    pub pressed: bool,
+    pub wheel: i16,
+    pub left_down: bool,
+}
+
+pub unsafe fn packet(message: LPARAM) -> Option<Packet> {
     unsafe {
         let mut input: RAWINPUT = std::mem::zeroed();
         let mut length = size_of::<RAWINPUT>() as u32;
@@ -54,14 +60,22 @@ pub unsafe fn buttons_down(message: LPARAM) -> Option<bool> {
         {
             return None;
         }
-        Some(
-            u32::from(input.data.mouse.Anonymous.Anonymous.usButtonFlags)
+        let buttons = input.data.mouse.Anonymous.Anonymous;
+        let flags = u32::from(buttons.usButtonFlags);
+        Some(Packet {
+            left_down: flags & RI_MOUSE_BUTTON_1_DOWN != 0,
+            pressed: flags
                 & (RI_MOUSE_BUTTON_1_DOWN
                     | RI_MOUSE_BUTTON_2_DOWN
                     | RI_MOUSE_BUTTON_3_DOWN
                     | RI_MOUSE_BUTTON_4_DOWN
                     | RI_MOUSE_BUTTON_5_DOWN)
                 != 0,
-        )
+            wheel: if flags & RI_MOUSE_WHEEL != 0 {
+                buttons.usButtonData as i16
+            } else {
+                0
+            },
+        })
     }
 }

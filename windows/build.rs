@@ -1,6 +1,7 @@
 use std::{env, fs, path::PathBuf};
 
 fn main() {
+    println!("cargo:rerun-if-changed=icons/icon.ico");
     let locales = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap()).join("../locales");
     println!("cargo:rerun-if-changed={}", locales.display());
     let mut files: Vec<_> = fs::read_dir(&locales)

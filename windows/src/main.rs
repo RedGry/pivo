@@ -27,11 +27,27 @@ async fn pivo_ready(app: tauri::AppHandle) -> Result<app::ViewState, String> {
 
 #[cfg(windows)]
 #[tauri::command]
-async fn pivo_plugin_controls(app: tauri::AppHandle, enabled: bool) -> Result<(), String> {
+async fn pivo_plugin_controls(
+    app: tauri::AppHandle,
+    mask: u16,
+    revision: u32,
+    music: bool,
+    lyrics: bool,
+    shelf: bool,
+    shelf_enabled: bool,
+) -> Result<(), String> {
     let (sender, receiver) = std::sync::mpsc::sync_channel(1);
     let main_app = app.clone();
     app.run_on_main_thread(move || {
-        let _ = sender.send(platform::plugin_controls(&main_app, enabled));
+        let _ = sender.send(platform::plugin_controls(
+            &main_app,
+            mask,
+            revision,
+            music,
+            lyrics,
+            shelf,
+            shelf_enabled,
+        ));
     })
     .map_err(|error| error.to_string())?;
     tauri::async_runtime::spawn_blocking(move || {
@@ -105,6 +121,19 @@ fn pivo_settings_section() -> Option<String> {
 
 #[cfg(windows)]
 #[tauri::command]
+async fn pivo_open_widget(
+    app: tauri::AppHandle,
+    window: tauri::WebviewWindow,
+    widget: String,
+) -> Result<(), String> {
+    if window.label() != "main" {
+        return Err("Widget shortcuts belong to the island".into());
+    }
+    platform::settings::open_widget(&app, &widget)
+}
+
+#[cfg(windows)]
+#[tauri::command]
 fn pivo_update_status(app: tauri::AppHandle) -> app::update::UpdateStatus {
     platform::update::status(&app)
 }
@@ -140,6 +169,74 @@ async fn pivo_set_compact_mode(
     compact_mode: String,
 ) -> Result<platform::preferences::Preferences, String> {
     platform::preferences::set_compact_mode(&app, compact_mode)
+}
+
+#[cfg(windows)]
+#[tauri::command]
+async fn pivo_set_island_scale(
+    app: tauri::AppHandle,
+    island_scale: String,
+) -> Result<platform::preferences::Preferences, String> {
+    platform::preferences::set_island_scale(&app, island_scale)
+}
+
+#[cfg(windows)]
+#[tauri::command]
+async fn pivo_set_minimal_strip(
+    app: tauri::AppHandle,
+    enabled: bool,
+) -> Result<platform::preferences::Preferences, String> {
+    platform::preferences::set_minimal_strip(&app, enabled)
+}
+
+#[cfg(windows)]
+#[tauri::command]
+async fn pivo_compact_target(app: tauri::AppHandle, minimal: bool) -> Result<(), String> {
+    app.clone()
+        .run_on_main_thread(move || platform::compact_target(&app, minimal))
+        .map_err(|error| error.to_string())
+}
+
+#[cfg(windows)]
+#[tauri::command]
+async fn pivo_set_mascot(
+    app: tauri::AppHandle,
+    size: app::preferences::MascotSize,
+    motion: bool,
+    hat: bool,
+    scarf: bool,
+) -> Result<platform::preferences::Preferences, String> {
+    platform::preferences::set_mascot(&app, size, motion, hat, scarf)
+}
+
+#[cfg(windows)]
+#[tauri::command]
+fn pivo_set_prop_skin(
+    app: tauri::AppHandle,
+    prop: app::preferences::MascotProp,
+    skin: app::preferences::PropSkin,
+) -> Result<platform::preferences::Preferences, String> {
+    platform::preferences::set_prop_skin(&app, prop, skin)
+}
+
+#[cfg(windows)]
+#[tauri::command]
+async fn pivo_set_holidays(
+    app: tauri::AppHandle,
+    outfit: app::preferences::HolidayMode,
+    appearance: app::preferences::HolidayMode,
+) -> Result<platform::preferences::Preferences, String> {
+    platform::preferences::set_holidays(&app, outfit, appearance)
+}
+
+#[cfg(windows)]
+#[tauri::command]
+async fn pivo_set_holiday_variant(
+    app: tauri::AppHandle,
+    occasion: String,
+    variant: app::preferences::PropSkin,
+) -> Result<platform::preferences::Preferences, String> {
+    platform::preferences::set_holiday_variant(&app, occasion, variant)
 }
 
 #[cfg(windows)]
@@ -180,12 +277,33 @@ fn main() {
             pivo_plugin_controls,
             pivo_exit,
             pivo_settings_section,
+            platform::settings::pivo_open_about_link,
+            pivo_open_widget,
+            platform::media::pivo_media_snapshot,
+            platform::media::pivo_media_action,
+            platform::media::pivo_media_seek,
+            platform::media::pivo_align_lyrics,
+            platform::media::pivo_cancel_lyric_alignment,
+            platform::hud::pivo_hud_snapshot,
+            platform::hud::pivo_keyboard_status,
+            platform::shelf::pivo_shelf_get,
+            platform::shelf::pivo_shelf_add,
+            platform::shelf::pivo_shelf_remove,
+            platform::shelf::pivo_shelf_clear_on_startup,
+            platform::shelf::pivo_shelf_open,
             pivo_update_status,
             pivo_update_revealed,
             pivo_get_preferences,
             pivo_set_locale,
             pivo_set_theme,
             pivo_set_compact_mode,
+            pivo_set_island_scale,
+            pivo_set_minimal_strip,
+            pivo_compact_target,
+            pivo_set_mascot,
+            pivo_set_prop_skin,
+            pivo_set_holidays,
+            pivo_set_holiday_variant,
             pivo_get_displays,
             pivo_set_display,
             pivo_set_automatic_updates,
@@ -194,6 +312,7 @@ fn main() {
         .setup(|app| {
             platform::preferences::setup(app.handle())?;
             platform::update::setup(app.handle())?;
+            platform::shelf::setup(app.handle());
             platform::install(app.handle())?;
             Ok(())
         })

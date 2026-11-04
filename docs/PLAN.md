@@ -45,4 +45,34 @@ The approved delivery order is interaction and size, character expressions, tray
 
 ## Later milestones
 
+## Full HD usability and built-in widgets (2026-11-02)
+
+Goal: make the island comfortable on a 24-inch 1920 x 1080 display and replace external plugin management with first-party widget settings.
+
+- [x] Reduce compact and expanded geometry together with native hit targets; preserve deliberate reveal and click-through.
+- [x] Shorten reveal latency, retain interruptible elapsed-time motion and make cursor following more visible.
+- [x] Balance the compact clock and rounded silhouette. Explore small eyes beside status without inventing media controls before a media integration exists.
+- [x] Provide individual built-in widget tabs in the Settings sidebar, retaining Pomodoro configuration and countdown state.
+- [x] Remove external manifest imports and external pages from the supported product flow.
+- [x] Provide a repeatable Windows Sandbox launcher and document guest resolution, DPI and WebView2 prerequisites.
+- [x] Review independently, run the final application gate once, and record available native acceptance and unavailable cases.
+
+Acceptance: exercise 1920 x 1080 at 100% and 125% scaling; verify current eye/edge reveal targets, old-body non-reveal, focus retention, click-through, Settings navigation and timer persistence. A virtual display cannot establish the perceived physical size on a 24-inch monitor. Containers cover build/model checks only; an interactive Windows guest covers native UI.
+
+Do not add placeholder music, calendar, water, shelf or task pages. Each needs a separate working implementation. The Nusa screenshots are navigation and density references, not assets to copy.
+
 Agree on music controls, calendar, system stats, AI agent status and personalization separately. Linux, macOS and Android follow after validating the Windows design.
+
+- [x] Confirm Windows Sandbox boot and execute actual 1920 x 1080 acceptance at 100%, including native input and clean exit with both motion policies.
+- [ ] Repeat guest acceptance at measured 125% DPI when a configurable display profile is available. The user confirmed the current Sandbox does not expose scale selection.
+
+## Follow-up: preserve the comfortable 2K profile
+
+The first Full HD revision used one reduced size for all monitors. User feedback rejected that behavior on 2560 x 1440. Use bounded automatic density based on the selected monitor's logical height (physical height adjusted for effective DPI), retaining the smaller profile on Full HD and restoring a larger profile on 2K. Rendering, native input and obstruction policy must use the same explicit scale. Acceptance must cover both profiles and migration between them.
+
+## Follow-up: built-in widget set
+
+Add Music and lyrics, Tasks, Calendar, Water, File shelf and HUD alongside Pomodoro. Reuse the Settings sidebar and native island action proxies. Persist only data each widget owns. Deliver reminders on the visible island and scope sampling to active pages or explicitly enabled notices.
+
+- [x] Implement the six additional widgets and connect their Settings pages and island actions.
+- [x] Record final application and native runtime acceptance, including platform-specific limits.

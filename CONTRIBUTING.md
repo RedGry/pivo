@@ -8,9 +8,9 @@ Use English in project files, comments and identifiers. Translated UI values and
 
 `main` is protected: changes enter through a pull request with the required `windows` CI check and resolved conversations. Direct pushes, force pushes and branch deletion are blocked, including for administrators. No additional approval count is imposed.
 
-Use `release/0.1.0` as the active integration branch for development and bug fixes in the 0.1 line. Start isolated work on `codex/<topic>` from the latest integration branch and target pull requests back to it. Coordinators may commit agreed work directly to that integration branch. Check for shared-checkout activity before switching branches or building.
+Use `release/0.2.0` as the active integration branch for development and bug fixes in the 0.2 line. Start isolated work on `codex/<topic>` from the latest integration branch and target pull requests back to it. Coordinators may commit agreed work directly to that integration branch. Check for shared-checkout activity before switching branches or building.
 
-Promote the reviewed integration branch into `main` through a pull request after the relevant checks pass. Tag the approved release commit using `vMAJOR.MINOR.PATCH`; follow [release preparation](docs/UPDATES.md). Published tags and assets are immutable. The next fix after `v0.1.0` is a new patch release, such as `v0.1.1`, even if work remains on `release/0.1.0`.
+Promote the reviewed integration branch into `main` through a pull request after the relevant checks pass. Tag the approved release commit using `vMAJOR.MINOR.PATCH`; follow [release preparation](docs/UPDATES.md). Published tags and assets are immutable. The next fix after `v0.2.0` is a new patch release, such as `v0.2.1`, even if work remains on `release/0.2.0`.
 
 Do not use CI-skip markers on commits being promoted to `main`: required pull-request checks must actually run. A skipped workflow can leave the pull request blocked.
 

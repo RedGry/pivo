@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.2.0 - 2026-11-04
+
+- Add Music with playback controls, artwork, synchronized lyrics and optional LRCLIB lookup.
+- Add personal widgets for tasks, calendar events and water tracking, plus a file shortcut shelf.
+- Add seasonal mascot outfits, holiday artwork and appearance controls.
+- Refine panel geometry, compact expressions, reversible motion and directional widget transitions.
+- Improve display selection, expanded input handling and Settings presentation.
+- Add reproducible Windows Sandbox testing tools and document native input and motion measurements.
+
 ## 0.1.0 - 2026-10-30
 
 - Render declared plugin settings inside Settings, including Pomodoro duration controls, with validated persistence and documented timer reset behavior.

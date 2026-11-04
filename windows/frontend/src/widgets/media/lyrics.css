@@ -1,0 +1,67 @@
+.track-lyrics {
+  position: absolute;
+  left: 328px;
+  top: 2px;
+  width: calc(var(--expanded-width, 752px) - 487px);
+  min-width: 265px;
+  max-height: 100px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+  gap: 8px;
+  scrollbar-width: none;
+  color: color-mix(in srgb, var(--island-text, #fafafa) 38%, var(--island-surface, #171717));
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border-inline-start: 1px solid var(--island-track, #363638);
+  font: 13px/1.25 "Segoe UI", sans-serif;
+  pointer-events: none;
+}
+
+.track-lyrics[hidden] { display: none; }
+
+.track-lyrics p {
+  transform-origin: left center;
+  font: inherit;
+  margin: 0;
+  flex: 0 0 auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.track-lyrics .track-lyrics-current {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  color: inherit;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+[data-icon="lyrics"][aria-pressed="true"] { color: var(--island-text, #fafafa); }
+
+.track-lyrics.is-plain { display: block; height: 91px; }
+.track-lyrics:not(.is-plain) {
+  mask-image: linear-gradient(to bottom, #000 0 78%, #000b);
+}
+.track-lyrics.is-plain[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .panel:not([data-reduced-motion="true"]) .track-lyrics {
+    interpolate-size: allow-keywords;
+    transition: opacity 300ms ease-out, display 300ms allow-discrete, height 300ms ease-out;
+  }
+  .panel:not([data-reduced-motion="true"]) .track-lyrics-plain {
+    transition: opacity 300ms ease-out;
+  }
+  .plugin-island .track-lyrics[hidden] { opacity: 0; pointer-events: none; }
+  @starting-style {
+    .plugin-island .track-lyrics:not([hidden]), .track-lyrics-plain:not([hidden]) { opacity: 0; }
+  }
+}
+.track-lyrics-plain {
+  height: 100%; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+  color: var(--island-text); font-size: 12px; line-height: 1.45;
+  scrollbar-width: thin; scrollbar-color: var(--island-track) transparent;
+}
+
+.track-lyrics .is-sung { color: var(--island-text, #fafafa); font-weight: 750; }

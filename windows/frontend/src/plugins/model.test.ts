@@ -34,14 +34,16 @@ test('switching focus and break resets timer to plugin durations', () => {
   assert.deepEqual(entry.timer, { remaining: 1500, deadline: null, mode: 'focus' });
 });
 
-test('restoration preserves disabled plugin order and rejects corrupted state', () => {
-  const state = initialState();
-  state.entries[0]!.enabled = false;
-  state.entries.unshift({ enabled: true, manifest: parseManifest({ schemaVersion: 1, id: 'example.note', name: { en: 'Note' }, kind: 'information', text: { en: '<script>plain text</script>' } }) });
-  state.selected = 'example.note';
-  assert.deepEqual(restore(JSON.stringify(state)), state);
+test('restoration drops imported pages while preserving built-in configuration and running time', () => {
+  const entry = initialState().entries[0]!;
+  entry.enabled = false;
+  saveConfiguration(entry, { focus: 15, break: 3 });
+  entry.timer = timerAction(entry, 'primary', 1000);
+  const external = { enabled: true, manifest: { id: 'example.note', kind: 'information' } };
+  const restored = restore(JSON.stringify({ entries: [external, entry], selected: 'example.note' }));
+  assert.deepEqual(restored, { entries: [entry], selected: builtin.id });
   assert.deepEqual(restore('{broken'), initialState());
-  assert.deepEqual(restore(JSON.stringify({ entries: [{ enabled: true, manifest: builtin }, { enabled: true, manifest: builtin }] })), initialState());
+  assert.deepEqual(restore(JSON.stringify({ entries: [external], selected: 'example.note' })), initialState());
 });
 
 test('reset stops a running timer and restores the current mode duration', () => {
@@ -194,5 +196,5 @@ test('Island ordering swaps enabled neighbors while preserving disabled slots, s
   assert.deepEqual(state.entries, [second, disabled, first]);
   movePlugin(state, first.manifest.id, -1);
   assert.deepEqual(state.entries, [first, disabled, second]);
-  assert.deepEqual(restore(JSON.stringify(state)), state);
+  assert.deepEqual(restore(JSON.stringify(state)), { entries: [first], selected: builtin.id });
 });

@@ -7,24 +7,43 @@
   </head>
   <body>
     <main class="panel" data-i18n-aria="panel.companion" aria-label="PivO companion">
+      <div class="panel-winter-rail" data-holiday-art="garland" aria-hidden="true" hidden></div>
       <div class="character" aria-hidden="true">
-        <div class="mascot"><img alt="" draggable="false" /></div>
-        <div class="reminder"><img alt="" draggable="false" /></div>
+        <div class="mascot"></div>
+        <svg class="attention-hand" viewBox="0 0 24 22" aria-hidden="true">
+          <defs><linearGradient id="wave-paw" x2=".7" y2="1"><stop stop-color="#eee5fa"/><stop offset="1" stop-color="#a592c0"/></linearGradient></defs>
+          <path d="M7 19c-2-1-4-4-5-6-.7-1.5.4-3 1.8-2.7l2.7 2C5 8 5.4 6.4 7 6.2c1-.2 1.9.4 2.5 1.5-.6-3 .4-4.5 2-4.5 1.5 0 2.4 1.3 2.7 3.8.6-2.2 1.9-3 3.2-2.5 1.3.6 1.5 1.9 1.2 4 1-1.1 2.6-.8 3.1.5.8 2.1-.8 6.8-2.4 9-2.3 3.2-8.7 3.6-12.3 1Z" fill="url(#wave-paw)" stroke="#8c79a6" stroke-width=".8" stroke-linejoin="round"/>
+          <path d="M8.5 14.5q4.6-2.6 8.7.1" fill="none" stroke="#9e86b7" stroke-width="1" stroke-linecap="round"/>
+          <path d="M8.5 10q-.6-1.5-.2-2m4.3.9q-.4-2-.1-3" fill="none" stroke="#fff7ff" stroke-opacity=".7" stroke-width="1" stroke-linecap="round"/>
+        </svg>
         <div class="eyes"><span class="gaze"><i></i><i></i></span></div>
       </div>
+      <span class="eyes-lyric" aria-hidden="true" hidden><span></span></span>
       <div class="strip-status" aria-hidden="true">
-        <svg class="status-ring" viewBox="0 0 20 20" fill="none"><circle class="ring-track" cx="10" cy="10" r="7.5"/><circle class="ring-progress" cx="10" cy="10" r="7.5" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>
-        <time class="clock"></time>
+        <span class="mini-eyes"><i></i><i></i></span>
+        <svg class="status-ring" viewBox="0 0 20 20" fill="none" hidden><circle class="ring-track" cx="10" cy="10" r="7.5"/><circle class="ring-progress" cx="10" cy="10" r="7.5" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>
+        <span class="strip-readout">
+          <time class="clock"></time>
+          <span class="strip-lyric" hidden><span></span></span>
+        </span>
+        <span class="playback-indicator"><i></i><i></i><i></i></span>
       </div>
       <header class="panel-header" data-i18n-aria="panel.clock" aria-label="Clock">
+        <span class="panel-holiday-ornament" data-holiday-art="ornament" aria-hidden="true" hidden></span>
         <div class="header-status">
-          <svg class="status-ring" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle class="ring-track" cx="10" cy="10" r="7.5"/><circle class="ring-progress" cx="10" cy="10" r="7.5" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>
+          <span class="holiday-date-icon" data-holiday-art="icon" aria-hidden="true" hidden></span>
+          <svg class="status-ring" viewBox="0 0 20 20" fill="none" aria-hidden="true" hidden><circle class="ring-track" cx="10" cy="10" r="7.5"/><circle class="ring-progress" cx="10" cy="10" r="7.5" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>
           <time class="header-date"></time><time class="clock"></time>
+          <span class="playback-indicator" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="header-volume header-device" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M2 6h3l3-3v10l-3-3H2z"/><path class="volume-wave" d="M10 6a3 3 0 0 1 0 4m2-6a6 6 0 0 1 0 8"/><path class="volume-muted" d="m10 6 4 4m0-4-4 4"/></svg></span>
+          <span class="header-battery header-device" hidden><svg viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="1" y="4" width="14" height="8" rx="2"/><path d="M17 7v2"/><rect class="battery-level" x="3" y="6" width="10" height="4" rx="1" fill="currentColor" stroke="none"/></svg></span>
         </div>
-        <span class="settings control" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m9.5 3-.7 2.2-2 .9L4.6 5.6 2.8 8.7l1.6 1.7v2.3l-1.6 1.7 1.8 3.1 2.2-.5 2 .9.7 2.1h3.6l.7-2.1 2-.9 2.2.5 1.8-3.1-1.6-1.7v-2.3l1.6-1.7L18 5.6l-2.2.5-2-.9-.7-2.2Z"/><circle cx="11.3" cy="11.5" r="3"/></svg></span>
-        <span class="exit control" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m7 7 10 10m0-10L7 17"/></svg></span>
+        <span class="settings control" data-native-action="5" data-i18n-title="controls.settings" data-i18n-aria="controls.settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m9.5 3-.7 2.2-2 .9L4.6 5.6 2.8 8.7l1.6 1.7v2.3l-1.6 1.7 1.8 3.1 2.2-.5 2 .9.7 2.1h3.6l.7-2.1 2-.9 2.2.5 1.8-3.1-1.6-1.7v-2.3l1.6-1.7L18 5.6l-2.2.5-2-.9-.7-2.2Z"/><circle cx="11.3" cy="11.5" r="3"/></svg></span>
+        <span class="exit control" data-native-action="0" data-i18n-title="controls.close" data-i18n-aria="controls.close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m7 7 10 10m0-10L7 17"/></svg></span>
       </header>
+      <div class="control-tooltip" hidden aria-hidden="true"></div>
       <section class="plugin-island"></section>
+      <div class="widget-notice" role="status" hidden></div>
       <section class="content">
         <section class="updates" aria-live="polite" hidden>
           <div class="update-message"></div>

@@ -1,0 +1,39 @@
+.mascot-highlight { stop-color: #68686d; }
+.mascot-shadow { stop-color: #17171b; }
+.mascot-eyes { fill: #fff; }
+.mascot-smile { stroke: #fff; }
+:root[data-theme="light"] .mascot-highlight { stop-color: #fff; }
+:root[data-theme="light"] .mascot-shadow { stop-color: #b3b3bc; }
+:root[data-theme="light"] .mascot-eyes { fill: #202027; }
+:root[data-theme="light"] .mascot-smile { stroke: #202027; }
+.mascot:not([data-hat="true"]) .mascot-hat,
+.mascot:not([data-scarf="true"]) .mascot-scarf { display: none; }
+.mascot-prop-equipped { opacity: 1; }
+.mascot-prop[data-prop="music"] { --prop-main: #8d85ae; --prop-light: #d4cde9; --prop-deep: #413951; }
+.mascot-prop[data-prop="pomodoro"] { --prop-main: #d87768; --prop-light: #ffe3bd; --prop-deep: #6b343b; }
+.mascot-prop[data-prop="water"] { --prop-main: #79bad4; --prop-light: #e3f7fa; --prop-deep: #31546a; }
+.mascot-prop[data-prop="tasks"] { --prop-main: #83a791; --prop-light: #e1eee0; --prop-deep: #3a5a50; }
+.mascot-prop[data-prop="calendar"] { --prop-main: #ba7985; --prop-light: #f1e0dc; --prop-deep: #614154; }
+.mascot-prop[data-prop="shelf"] { --prop-main: #d7aa70; --prop-light: #f9e2b9; --prop-deep: #76543e; }
+.mascot-prop[data-prop="hud"] { --prop-main: #7799b3; --prop-light: #e1eff5; --prop-deep: #384958; }
+.prop-glint { stop-color: var(--prop-light); }
+.prop-color { stop-color: var(--prop-main); }
+.prop-shadow { stop-color: var(--prop-deep); }
+
+[data-shape] { display: none; }
+:not([data-skin]) > [data-shape="classic"],
+[data-skin="classic"] > [data-shape="classic"],
+[data-skin="alternate"] > [data-shape="alternate"],
+[data-skin="signature"] > [data-shape="signature"] { display: inline; }
+.mascot.has-occasion-outfit :is(.mascot-hat, .mascot-scarf) { display: none; }
+.occasion-head {
+  fill: color-mix(in srgb, var(--occasion-cloth), #25202b 22%);
+  stroke: color-mix(in srgb, var(--occasion-cloth), #25202b 55%);
+  stroke-width: 1; stroke-linejoin: round;
+}
+.occasion-stitch {
+  fill: none; stroke: color-mix(in srgb, var(--occasion-cloth), #fff 28%);
+  stroke-width: 1.15; stroke-linecap: round;
+}
+.occasion-neck { fill: color-mix(in srgb, var(--occasion-cloth), #25202b 34%); }
+.occasion-pin { color: #e3d9e8; }

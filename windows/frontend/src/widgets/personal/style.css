@@ -1,0 +1,162 @@
+.personal-widget { display: grid; gap: 16px; }
+.personal-widget form, .personal-widget label, .personal-actions, .personal-calendar-controls {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.personal-widget input:not([type="checkbox"]) {
+  min-height: 36px; padding: 6px 10px; max-width: 100%; border: 1px solid var(--stroke);
+  border-radius: 8px; background: var(--surface); color: var(--text);
+}
+.personal-widget input[type="number"] { width: 90px; }
+.personal-widget ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.personal-widget li {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--stroke); padding-bottom: 8px; overflow-wrap: anywhere;
+}
+.personal-widget li small { color: var(--muted); margin-left: auto; }
+.personal-widget input:checked + span { text-decoration: line-through; }
+.personal-widget progress { width: 100%; accent-color: var(--accent); }
+.water-intake progress { appearance: none; height: 8px; border: 0; border-radius: 8px; overflow: hidden; }
+.water-intake progress::-webkit-progress-bar { background: var(--raised); }
+.water-intake progress::-webkit-progress-value { background: var(--accent); transition: width 300ms ease; }
+:root[data-reduced-motion] .water-intake progress::-webkit-progress-value { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .water-intake progress::-webkit-progress-value { transition: none; }
+}
+.personal-calendar-controls h2 { margin: 0; }
+.personal-calendar-grid {
+  display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center;
+}
+.personal-calendar-grid > * { padding: 8px 2px; border-radius: 6px; }
+.personal-calendar-grid .other-month { color: var(--faint); }
+.personal-calendar-grid [aria-current="date"] { color: var(--accent); background: var(--accent-wash); }
+.personal-calendar-grid .has-tasks { box-shadow: inset 0 -2px var(--accent); }
+
+.personal-calendar-grid .has-holiday { color: var(--accent); font-weight: 650; }
+.personal-holiday-events { margin-top: 10px; font-size: 12px; }
+.personal-holiday-events:empty { display: none; }
+.personal-widget .personal-holiday-events { gap: 0; }
+.personal-widget .personal-holiday-events > li { box-sizing: border-box; margin-bottom: 8px; }
+
+.personal-calendar-controls { gap: 8px; margin-bottom: 12px; }
+.personal-calendar-controls h2 { margin-inline: 6px; min-width: 106px; text-align: center; }
+.personal-calendar-controls .calendar-arrow {
+  width: 34px; height: 34px; display: grid; place-items: center; padding: 0;
+  border: 1px solid var(--stroke); background: var(--raised); color: var(--text); font-size: 20px;
+}
+.personal-calendar-grid { gap: 4px; }
+.calendar-grid-stage { position: relative; }
+.calendar-grid-stage > .calendar-grid-outgoing { position: absolute; inset: 0 0 auto; pointer-events: none; }
+.personal-calendar-grid .calendar-day {
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  min-height: 35px; min-width: 0; padding: 3px;
+  border: 1px solid var(--stroke); background: var(--surface); color: var(--text);
+  border-radius: 6px; font-variant-numeric: tabular-nums;
+}
+.personal-calendar-grid .calendar-day:hover { background: var(--raised); }
+.personal-calendar-grid .other-month { color: var(--faint); }
+.personal-calendar-grid .has-event { border-color: var(--accent); }
+.calendar-holiday-icon { width: 14px; height: 14px; flex: 0 0 14px; }
+.calendar-holiday-icon svg { display: block; width: 100%; height: 100%; }
+.personal-widget .calendar-event-form, .personal-widget .task-editor {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: end; gap: 10px; padding: 12px; margin-top: 12px;
+  border: 1px solid var(--stroke); border-radius: 10px; background: var(--surface);
+}
+.personal-widget :is(.calendar-event-form, .task-editor) label { display: grid; gap: 5px; }
+.personal-widget :is(.calendar-event-form, .task-editor) input { width: 100%; }
+.personal-widget .task-editor { margin-top: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.personal-form-actions {
+  grid-column: 1 / -1; justify-self: end; width: min(100%, 320px);
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+}
+.personal-form-actions > button { min-width: 0; min-height: 38px; }
+/* Reserve inactive controls' slots so editing and country changes do not reflow the form. */
+.personal-widget .calendar-icon-field[hidden], .personal-form-actions > button[hidden] {
+  display: grid !important; visibility: hidden; opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-reduced-motion]) .personal-widget .calendar-icon-field,
+  :root:not([data-reduced-motion]) .personal-form-actions > button {
+    transition: opacity 300ms ease-out, visibility 300ms ease-out;
+  }
+}
+:root[data-reduced-motion] .personal-widget .calendar-icon-field,
+:root[data-reduced-motion] .personal-form-actions > button { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .personal-widget .calendar-icon-field, .personal-form-actions > button { transition: none; }
+}
+.personal-widget .task-list { gap: 6px; }
+.personal-widget .task-list li {
+  display: flex; justify-content: space-between; gap: 12px; padding: 9px 10px;
+  border: 1px solid var(--stroke); border-radius: 9px; background: var(--surface);
+}
+.task-info { display: grid; gap: 4px; min-width: 0; }
+.task-info small { margin-left: 24px; }
+.task-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.task-actions button { background: var(--raised); color: var(--text); }
+@media (max-width: 680px) {
+  .personal-widget .calendar-event-form, .personal-widget .task-editor { grid-template-columns: minmax(0, 1fr); }
+}
+
+.personal-calendar-grid .calendar-selected { box-shadow: inset 0 0 0 1px var(--focus); }
+
+.personal-widget .task-list { position: relative; }
+.personal-widget .task-list { gap: 0; }
+.personal-widget .task-list > li { box-sizing: border-box; margin-bottom: 6px; }
+.personal-widget .task-list li {
+  transform: translateY(var(--task-shift, 0px));
+  transition: transform 300ms ease, opacity 300ms ease, box-shadow 300ms ease;
+}
+.personal-widget .task-list li.task-lifted {
+  opacity: .45; transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 8px 18px #0003; z-index: 1;
+}
+.task-info { flex: 1; }
+.task-drag-handle {
+  align-self: center; flex: 0 0 28px; width: 28px; height: 30px;
+  display: grid; place-items: center; padding: 0;
+  border: 1px solid var(--stroke); border-radius: 6px;
+  background: var(--raised); color: var(--muted); cursor: grab;
+}
+.task-drag-handle:active { cursor: grabbing; }
+.task-drag-handle svg {
+  width: 16px; height: 16px; pointer-events: none;
+  stroke: currentColor; stroke-width: 2; stroke-linecap: round;
+}
+.personal-widget .task-editor { margin-top: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .personal-widget .task-list li { transition: none; }
+}
+.calendar-country-settings {
+  display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-bottom: 14px;
+}
+.calendar-country-settings form { margin: 0; align-items: end; }
+.personal-widget .calendar-country-settings label { display: grid; gap: 5px; }
+.personal-widget .calendar-event-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.personal-widget .calendar-event-form > .primary-button { grid-column: 1 / -1; justify-self: end; }
+.personal-widget :is(.calendar-event-form, .task-editor) > .primary-button {
+  align-self: end; min-height: 38px;
+}
+.personal-widget .calendar-event-form > label { min-width: 0; }
+.personal-widget .calendar-event-form select {
+  width: 100%; max-width: 100%; height: 38px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.calendar-country-settings { align-items: end; }
+.calendar-country-settings > label, .calendar-country-settings form > label { min-width: 0; }
+.calendar-country-settings :is(form, label) { max-width: 100%; }
+.calendar-preview { container-type: inline-size; }
+@container (max-width: 560px) {
+  .personal-widget .calendar-event-form,
+  .personal-widget .calendar-event-form:has(.calendar-icon-field:not([hidden])) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@container (max-width: 320px) {
+  .personal-widget .calendar-event-form,
+  .personal-widget .calendar-event-form:has(.calendar-icon-field:not([hidden])) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
