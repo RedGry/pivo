@@ -10,7 +10,7 @@ Prototype acceptance checks:
 
 - Expand and collapse the top panel.
 - Display the original mascot and a clock.
-- Verify the 24-pixel Strip row without eyes, 180 x 40 Eyes and 560 x 160 Expanded. Auto chooses Eyes only when the compact footprint is unobstructed; ordinary overlapping windows, including Settings, select Strip. Explicit Eyes/Strip choices override Auto. Preserve character identity and smooth reversible motion with concave shoulders.
+- Verify the 24-pixel Strip row with miniature eyes, 148 x 34 Eyes and 480 x 144 Expanded. Auto chooses Eyes only when the compact footprint is unobstructed; ordinary overlapping windows, including Settings, select Strip. Explicit Eyes/Strip choices override Auto. Preserve character identity and smooth reversible motion with concave shoulders.
 - Verify real Strip edge and Eyes-cluster click/hover reveal, outside-click collapse, dismissal recovery and click-through elsewhere. Interior clicks, including the face, must leave the island open. Pointer exit must fold it after the grace period, and re-entry must cancel that pending fold. Moving through the old body area must not reopen it.
 - Open and reuse a separate Settings window; test custom title-bar drag/minimize/maximize/close without exiting PivO. Check Appearance, Island, Updates and About groups, live language/theme changes, friendly update summaries and preference persistence.
 - Allow clicks on browser tabs and other applications underneath decorative areas without taking keyboard focus. Check hover dwell, explicit hide/exit and fullscreen behavior. In Light theme, verify a light compact and expanded surface, contrasting eyes and consistent antialiased edges.
@@ -20,14 +20,14 @@ Prototype acceptance checks:
 - Exit cleanly.
 - Record idle CPU, working set and release executable size.
 
-## Compact interaction and plugin acceptance
+## Compact interaction and widget acceptance
 
-- Cross the current reveal target in less than 350 ms: remain folded. Leave and re-enter: restart the dwell rather than reuse an old timer.
+- Cross the current reveal target in less than 100 ms: remain folded. Leave and re-enter: restart the dwell rather than reuse an old timer.
 - Hold inside the current target: reveal. Exit Expanded: fold after 200 ms. Re-enter before the deadline: cancel the pending fold. Crossing the old body while folded must not reveal.
 - Check compact blinking and finite expressions. Strip reminders must remain decorative and must not enlarge the reveal target. Hide, fullscreen and reduced motion must cancel expression scheduling.
 - Start, pause, resume and reset Pomodoro from the island. Fold and reopen, then restart the app: remaining time must follow elapsed wall time rather than rendering frames.
-- Disable all plugins, enable Pomodoro, reorder cards and reopen Settings. Check persistence and immediate synchronization across the two windows.
-- Import the documented external JSON example. Reject malformed/unsupported manifests visibly. Render plugin-provided text literally, without script execution or privileged access.
+- Disable and enable Pomodoro through its dedicated sidebar tab, then reopen Settings. Check persistence and immediate synchronization across the two windows.
+- Load legacy external pages: exclude them while preserving built-in Pomodoro settings and countdown. Verify no import control remains.
 - Open About directly from the tray with Settings both closed and already open. Check the exact tray order, then verify the Autostart entry reflects the current user's Windows setting. Restore any startup preference changed during acceptance.
 ## Native action readiness regression
 
@@ -42,5 +42,14 @@ The public MCP compatibility click toggles the main panel and does not test its 
 
 Capture the actual Strip presentation after changing its status row; an Eyes capture does not validate Strip. Ring and time must form one balanced group, clear of the clipped shoulders. A neutral status ring must not imply an arbitrary percentage.
 
-After Settings layout changes, capture both the default window and a wide window. Theme previews must retain sensible proportions, and labels/controls must remain inside the bounded content column. Restore the original Settings geometry after the fixture. For declared plugin settings, capture the generated form and check validated persistence/reset behavior; report live form editing separately from model tests when it is not exercised.
-For themed selects, capture the opened Language picker as well as the closed button. Check chevron inset, selected/hover state, focus border and popup alignment without changing the selected locale. Restore focus and close the popup afterward. For plugin tiles, verify initially closed disclosures, metadata/icons and the absence of order arrows; check ordering separately under Island. Ring captures must match real plugin state, including paused progress and no progress for information pages.
+After Settings layout changes, capture both the default window and a wide window. Theme previews must retain sensible proportions, and labels/controls must remain inside the bounded content column. Restore the original Settings geometry after the fixture. For the Pomodoro sidebar tab, capture the duration form and check validated persistence/reset behavior; report live form editing separately from model tests when it is not exercised.
+For themed selects, capture the opened Language picker as well as the closed button. Check chevron inset, selected/hover state, focus border and popup alignment without changing the selected locale. Restore focus and close the popup afterward. Verify the Pomodoro tab has no import, remove or order controls. Ring captures must match actual timer state, including paused progress and no ring when disabled.
+## Full HD guest acceptance
+
+Use [the Windows guest workflow](../docs/TEST-ENVIRONMENT.md). Record actual guest resolution and scaling before testing 1920 x 1080 at 100% and 125%. Include miniature Strip eyes, clock baseline, reveal onset and settling, gaze visibility, deliberate reveal and native click-through. Record physical 24-inch monitor feedback separately from virtual captures.
+
+## Monitor-dependent size regression
+
+A global density reduction must not make the previously comfortable 2560 x 1440 layout smaller. Test both 1920 x 1080 and 2560 x 1440 with their effective Windows DPI. Size policy uses logical monitor height, not resolution labels or diagonal alone. At 100% scaling the compact base profile applies at 1080 logical pixels; the larger profile applies at 1440. Intermediate logical heights interpolate within bounded limits.
+
+Verify moving the selected island between these profiles updates native canvas, decorative rendering, eye/edge target, action proxies and obstruction footprint together. A size change must invalidate presentation readiness until the corresponding frontend frame is acknowledged. Stale acknowledgments must not enable controls for the former size. Capture both profiles rather than inferring one from the other.

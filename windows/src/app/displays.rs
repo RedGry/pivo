@@ -4,6 +4,8 @@ use serde::Serialize;
 pub struct Display {
     pub id: String,
     pub number: u32,
+    pub x: i32,
+    pub y: i32,
     pub width: u32,
     pub height: u32,
     pub primary: bool,
@@ -30,6 +32,8 @@ mod tests {
             Display {
                 id: "screen1".into(),
                 number: 1,
+                x: 0,
+                y: 0,
                 width: 2560,
                 height: 1440,
                 primary: true,
@@ -37,6 +41,8 @@ mod tests {
             Display {
                 id: "screen2".into(),
                 number: 2,
+                x: -1920,
+                y: 0,
                 width: 1920,
                 height: 1080,
                 primary: false,

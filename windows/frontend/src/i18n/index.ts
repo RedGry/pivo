@@ -6,7 +6,7 @@ const catalogs = Object.fromEntries(Object.entries(files).map(([path, catalog]) 
 ]));
 let current = 'en';
 
-export const locales = Object.entries(catalogs).map(([id, catalog]) => ({ id, name: catalog.name }));
+export const locales = Object.entries(catalogs).map(([id, catalog]) => ({ id, name: catalog.name, flag: catalog.flag }));
 export const locale = () => current;
 export const t = (key: TranslationKey, parameters?: Record<string, string | number>) =>
   translate(catalogs, current, key, parameters);

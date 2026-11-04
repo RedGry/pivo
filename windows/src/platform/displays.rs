@@ -48,6 +48,8 @@ fn enumerate() -> Result<Vec<Monitor>, String> {
                 info: Display {
                     id,
                     number,
+                    x: bounds.left,
+                    y: bounds.top,
                     width: (bounds.right - bounds.left).max(0) as u32,
                     height: (bounds.bottom - bounds.top).max(0) as u32,
                     primary: info.monitorInfo.dwFlags & MONITORINFOF_PRIMARY != 0,

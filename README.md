@@ -4,7 +4,7 @@ A small companion at the top of your screen.
 
 PivO is a desktop companion built with Tauri 2, Rust and TypeScript, with its own mascot and visual identity. Windows comes first; other platforms can follow.
 
-[Download PivO v0.1.0 for Windows](https://github.com/RedGry/pivo/releases/download/v0.1.0/PivO_0.1.0_x64-setup.exe) · [Release notes](https://github.com/RedGry/pivo/releases/tag/v0.1.0)
+[Download PivO v0.2.0 for Windows](https://github.com/RedGry/pivo/releases/download/v0.2.0/PivO_0.2.0_x64-setup.exe) · [Release notes](https://github.com/RedGry/pivo/releases/tag/v0.2.0)
 
 <p align="center">
   <img src="assets/mascot.png" alt="The original PivO mascot" width="240" />
@@ -14,7 +14,7 @@ PivO is a desktop companion built with Tauri 2, Rust and TypeScript, with its ow
 
 Actual Windows application captures, shown in Russian. PivO also includes English.
 
-**Expanded island** with the original mascot, clock and Pomodoro plugin:
+**Expanded island** with the original mascot, clock and Pomodoro widget:
 
 <img src="docs/images/island-expanded.png" alt="Expanded PivO island with mascot, clock and Pomodoro controls" width="560" />
 
@@ -32,7 +32,7 @@ Capture details and asset terms are recorded in [image provenance](docs/images/R
 
 An expandable top panel, our mascot and a clock. Music, a calendar, system stats and AI agent status can follow one step at a time.
 
-**Status:** the compact interaction and plugin candidate includes a 560 x 160 island, finite character gestures, the simplified tray and declarative plugins. See [validation](docs/VALIDATION.md) for the final automated results and explicit runtime coverage limits.
+**Status:** the Full HD usability candidate reduces Expanded to 480 x 144 logical pixels, shortens reveal dwell and provides seven built-in widgets. See [validation](docs/VALIDATION.md) for actual checks and runtime limits. The screenshots above show the earlier build.
 
 ## Build
 
@@ -50,15 +50,15 @@ PivO has three presentations: **Strip**, a 24-pixel compact row for future statu
 
 Hover or click the deliberate edge target in Strip, or the eye cluster in Eyes, to expand. Move the pointer outside the expanded island to fold it after a short grace period. Outside clicks also fold it; interior clicks leave it open. Decorative areas pass clicks through without taking keyboard focus. The revealed header aligns the clock, settings and exit controls. Ctrl+Alt+P hides or restores the companion.
 
-Settings groups **Appearance**, **Island**, **Plugins**, **Updates** and **About**. Choose Dark, Light or System theme, language, compact behavior and display. Dark preserves the original default appearance. Display selection follows the primary monitor by default; a missing saved display falls back to primary and resumes its saved placement when reconnected. Each language is a separate [locale file](locales/README.md), discovered on rebuild; English and Russian are included.
+Settings includes Appearance, Island, Updates, About and a dedicated sidebar page for each widget. Choose Dark, Light or System theme, language, compact behavior and display. Dark preserves the original default appearance. Display selection follows the primary monitor by default; a missing saved display falls back to primary and resumes its saved placement when reconnected. Each language is a separate [locale file](locales/README.md), discovered on rebuild; English and Russian are included.
 
 The approved static mascot at `assets/mascot.png` is bundled into the frontend. A portable build does not need a separate image file. See [asset provenance](assets/README.md) for its source and usage terms.
 
-## Plugins
+## Built-in widgets
 
-The first bundled plugin is Pomodoro, with Start/Pause and focus/break actions on the island and Reset in Settings. Settings shows connection tiles with developer-supplied icons and metadata, collapsed plugin settings, and JSON import without a rebuild. Island settings controls page order separately. See [the developer contract](docs/PLUGINS.md) and [examples](examples/plugins/). These declarative plugins cannot execute code or access files, processes or the network. Music, water tracking, a file shelf, tasks and device-event integrations remain separate future deliveries.
+Switch between Music and lyrics, Tasks, Calendar, Pomodoro, Water, File shelf and HUD on the island. Enable and configure each widget in its Settings page. Pomodoro keeps its existing saved timer and duration settings. See [widget behavior and Windows support](docs/PLUGINS.md).
 
-Compact Eyes blink, occasionally look curious and follow the cursor subtly. Strip briefly shows the original mascot every 120–180 seconds. Hidden and reduced-motion states stop those gestures. Reveal requires a 350 ms hover dwell; leaving Expanded starts a cancellable 200 ms fold delay.
+Compact Eyes blink, occasionally look curious and follow the cursor. Strip briefly shows the original mascot every 120–180 seconds. Hidden and reduced-motion states stop those gestures. Reveal uses a deliberate hover target. Leaving Expanded starts a reversible fold; returning to the current target reverses it.
 
 The tray offers Autostart, Settings, About PivO, Check for updates and Exit. Autostart applies to the current Windows user.
 
@@ -76,4 +76,8 @@ Code is [MIT licensed](LICENSE). The mascot, artwork, sounds and branding have [
 
 Dependency and Rust library notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-The header ring follows the selected plugin's real timer progress. Information plugins provide no progress and hide the ring. Clock/date formatting follows the selected locale.
+The header ring shows timer progress while Pomodoro is selected. Clock/date formatting follows the selected locale.
+
+For isolated interactive Windows testing, see [the test environment](docs/TEST-ENVIRONMENT.md). Containers cover build and model tests; native UI acceptance requires an interactive Windows desktop.
+
+Automatic island sizing uses the selected monitor's logical height, including Windows DPI: at 100% scale, Expanded is 480 x 144 on 1920 x 1080 and 560 x 168 on 2560 x 1440. Intermediate heights interpolate within these bounds. Rendering and native input use the same scale.

@@ -3,6 +3,7 @@ import english from '../../../../locales/en.json' with { type: 'json' };
 export type TranslationKey = keyof typeof english.messages;
 export interface Catalog {
   name: string;
+  flag?: string;
   messages: Partial<Record<TranslationKey, string>>;
 }
 

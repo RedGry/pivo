@@ -4,7 +4,19 @@ Read README.md, AGENTS.md and docs/PLAN.md. Discuss substantial features and acc
 
 Use English in project files, comments and identifiers. Translated UI values and language names belong in locales/<tag>.json; see locales/README.md. Prefer small readable changes, reusable behavior and explicit platform boundaries. Avoid speculative abstractions and unnecessary dependencies.
 
-## Checks
+## Branch workflow
+
+`main` is protected: changes enter through a pull request with the required `windows` CI check and resolved conversations. Direct pushes, force pushes and branch deletion are blocked, including for administrators. No additional approval count is imposed.
+
+Use `release/0.2.0` as the active integration branch for development and bug fixes in the 0.2 line. Start isolated work on `codex/<topic>` from the latest integration branch and target pull requests back to it. Coordinators may commit agreed work directly to that integration branch. Check for shared-checkout activity before switching branches or building.
+
+Promote the reviewed integration branch into `main` through a pull request after the relevant checks pass. Tag the approved release commit using `vMAJOR.MINOR.PATCH`; follow [release preparation](docs/UPDATES.md). Published tags and assets are immutable. The next fix after `v0.2.0` is a new patch release, such as `v0.2.1`, even if work remains on `release/0.2.0`.
+
+Do not use CI-skip markers on commits being promoted to `main`: required pull-request checks must actually run. A skipped workflow can leave the pull request blocked.
+
+Documentation and process changes require focused validation; they do not justify rerunning application builds or live UI checks locally. A queued GitHub workflow is pending work, not proof of a released version.
+
+## Validation
 
 For features, finish implementation and review corrections before the final validation batch. For bugs, first demonstrate a failing regression test, then fix and rerun it. Follow AGENTS.md for focused checks and runtime acceptance. Process-only changes need focused validation of their artifacts.
 

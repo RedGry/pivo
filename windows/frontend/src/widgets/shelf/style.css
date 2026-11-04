@@ -1,0 +1,11 @@
+.shelf-widget { display: grid; gap: 12px; }
+.shelf-widget label, .shelf-widget li, .shelf-widget li div { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.shelf-widget label { justify-content: space-between; }
+.shelf-widget label input { order: 1; }
+.shelf-widget .primary-button { justify-self: start; }
+.shelf-widget ul { display: grid; margin: 0; padding: 0; list-style: none; }
+.shelf-widget li { box-sizing: border-box; min-height: 0; justify-content: space-between; padding-block: 8px; margin-bottom: 8px; border-block-start: 1px solid var(--stroke); }
+.shelf-widget li span { min-width: 0; overflow-wrap: anywhere; }
+.shelf-widget .footnote { margin: 0; }
+.shelf-widget .footnote:empty { display: none; }
+.shelf-widget button[aria-disabled="true"] { cursor: default; opacity: .5; }
