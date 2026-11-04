@@ -1,98 +1,173 @@
-# PivO
+<p align="center">
+  <img src="assets/mascot.png" alt="The original PivO mascot, with tiny paws and no accessories" width="320" />
+</p>
 
-A desktop companion that lives at the top of your screen, with its own mascot, music controls and everyday widgets.
+<h1 align="center">PivO</h1>
 
-[Download PivO 0.2.0 for Windows x64](https://github.com/RedGry/pivo/releases/download/v0.2.0/PivO_0.2.0_x64-setup.exe) · [What's new](https://github.com/RedGry/pivo/releases/tag/v0.2.0) · [Full changelog](CHANGELOG.md)
+<p align="center">
+  <strong>A little friend at the top of your screen.</strong><br />
+  Music, focus breaks and everyday reminders — with a curious pair of eyes.
+</p>
 
-PivO starts as a compact pair of eyes or a thin Strip. Hover over its deliberate reveal target to open the island, use a widget, then move away to fold it. The companion stays on the selected monitor without reserving desktop space or taking keyboard focus during ordinary interaction. Settings opens as a separate window when requested.
+<p align="center">
+  <a href="https://github.com/RedGry/pivo/releases/download/v0.2.0/PivO_0.2.0_x64-setup.exe"><strong>Download for Windows</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/RedGry/pivo/releases/tag/v0.2.0">What's new in 0.2.0</a>
+  &nbsp;·&nbsp;
+  <a href="#bring-pivo-home">Getting started</a>
+</p>
 
-## Screenshots
+<p align="center"><sub>Windows x64 · English &amp; Russian · Free, MIT-licensed code</sub></p>
 
-Actual PivO 0.2.0 Windows captures, taken through the separate PivO debug MCP. These images show the running application, rather than a mockup. The captures use English and Dark theme. The application supports English and Russian.
+---
 
-**Expanded island** — the mascot, clock and a built-in widget:
+PivO peeks out from the top of your desktop. Come closer and the little island opens: your music, a focus timer, today's plans and a familiar face. Move away and it folds back into a pair of eyes.
 
-<img src="docs/images/island-expanded.png" alt="PivO 0.2.0 expanded island with its current mascot, clock and widget navigation" width="880" />
+<p align="center">
+  <img src="docs/images/island-expanded.png" alt="PivO 0.2.0 in Dark theme with the mascot, clock and Pomodoro widget" width="787" /><br />
+  <sub>A focus session, a little company, and room for your desktop.</sub>
+</p>
+
+## Meet PivO
+
+A blink, a glance, a tiny wave. PivO follows the pointer, gets sleepy when things are quiet and wakes when you return. Play some music and the mascot can dance along.
+
+PivO starts with a simple, familiar look. Hats, scarves and widget props are optional; you can keep the simple look, choose a different size or turn gestures off. Choose a style for each garment or widget prop, from a hat or scarf to the little objects that accompany each widget. Reduced-motion preferences are respected too.
+
+## Little helpers for your day
+
+Seven built-in widgets share the island. Pick your favorites in Settings, then move between them with arrows, page dots or the mouse wheel. Hovering a dot reveals its widget icon.
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🎵 Music &amp; lyrics</h3>
+      <p>Keep the current track, artist and album art close by. Play, pause, skip or seek through the Windows media session. The island picks up the artwork's color, and little playback bars follow the playing state.</p>
+      <p>Open the wider lyrics view for highlighted timed lines and click-to-seek. Import an LRC file or paste lyrics; local text takes priority. LRCLIB lookup is enabled by default while Music is open and can be switched off.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🍅 A moment to focus</h3>
+      <p>Start a Pomodoro, watch the countdown ring and take a short break. Choose your focus and break lengths, pause or reset, and keep an active timer across app restarts.</p>
+      <p>Timer progress stays available as you browse the other widgets.</p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <h3>☑️ One thing at a time</h3>
+      <p>Write down tasks, put them in order and check them off from the island. Add deadlines, choose a snooze duration and enable due reminders when you need a nudge.</p>
+    </td>
+    <td valign="top">
+      <h3>📅 Plans &amp; little occasions</h3>
+      <p>Browse a month or week, jump to a date and choose the first weekday. Personal events and task dates sit alongside illustrated holidays.</p>
+      <p>Filter country calendars, add your own countries and save recurring dates.</p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <h3>💧 A sip, then carry on</h3>
+      <p>Set a daily water target and your usual serving size. Log a drink, undo an entry or reset today's intake. Optional reminders follow your chosen active hours.</p>
+    </td>
+    <td valign="top">
+      <h3>📎 Keep it within reach</h3>
+      <p>Put file shortcuts on the shelf, then open or reveal their originals from Windows. Remove a shortcut without deleting its file, or clear the shelf when PivO starts.</p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <h3>🔊 Small updates from your desktop</h3>
+      <p>HUD readings and configurable popups cover volume, keyboard language, Caps Lock, power, Wi-Fi and supported Bluetooth headsets. Brightness readings need a DDC/CI-capable monitor. Choose which notices you want to see.</p>
+    </td>
+  </tr>
+</table>
+
+[Explore widget behavior and player support →](docs/PLUGINS.md)
+
+## Make it yours
+
+**A change of season.** Choose winter, love, spring, summer, autumn or Halloween decorations, or let the calendar choose. Occasion outfits, holiday icons and a winter garland bring a little celebration to the island. Mascot outfits and interface decorations have separate controls.
+
+**Your colors, your language.** Dark, Light and System themes, English and Russian, and a separate Settings window with live previews. The README's application screenshots all use Dark theme.
+
+**The right spot.** Choose a physical monitor on the display map. PivO remembers it, falls back to the primary monitor if it disappears and returns when it reconnects. The island adapts to the selected monitor's size and display scale, with manual sizing available too. Auto mode also offers a minimal Strip when no lyrics are on screen.
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <strong>A little wardrobe, if you want one</strong><br /><br />
+      <img src="docs/images/settings-mascot.png" alt="Dark-theme Mascot settings with the bare mascot and optional hat and scarf previews" width="420" />
+    </td>
+    <td width="50%" align="center" valign="top">
+      <strong>Your days, at a glance</strong><br /><br />
+      <img src="docs/images/settings-calendar.png" alt="Dark-theme Calendar settings with November, holiday icons and country calendars" width="420" />
+    </td>
+  </tr>
+</table>
 
 <details>
-<summary>Compact Eyes and Strip</summary>
+<summary><strong>Take a closer look: themes, Eyes and Strip</strong></summary>
 
-**Compact Eyes** — the companion at rest:
-
-<img src="docs/images/island-eyes.png" alt="PivO 0.2.0 compact Eyes" width="560" />
-
-**Compact Strip** — the clock and compact eyes at the screen edge:
-
-<img src="docs/images/island-strip.png" alt="PivO 0.2.0 compact Strip" width="560" />
-
-</details>
-
-**Appearance settings** — themes, language and seasonal presentation:
+### Appearance
 
 <img src="docs/images/settings-appearance.png" alt="PivO 0.2.0 Appearance settings with Dark theme and English selected" width="760" />
 
-<details>
-<summary>Mascot customization and Calendar</summary>
+### Eyes
 
-**Mascot** — clothing previews, size and gesture controls:
+The compact companion, with blinks, curious glances and a sleepy idle state.
 
-<img src="docs/images/settings-mascot.png" alt="PivO 0.2.0 Mascot settings with clothing previews" width="760" />
+<img src="docs/images/island-eyes.png" alt="PivO 0.2.0 compact Eyes in Dark theme" width="560" />
 
-**Calendar** — month navigation, holiday icons and country calendars:
+### Strip
 
-<img src="docs/images/settings-calendar.png" alt="PivO 0.2.0 Calendar settings showing November and holiday markers" width="760" />
+A small clock and tiny eyes along the screen edge. Auto mode chooses Strip when an ordinary window overlaps the compact footprint; Eyes and Strip can also be selected manually.
+
+<img src="docs/images/island-strip.png" alt="PivO 0.2.0 Dark-theme Strip with a clock and tiny eyes" width="560" />
 
 </details>
 
-Capture details and asset terms are recorded in [image provenance](docs/images/README.md).
+All application images are real captures of the published 0.2.0 build. The hero uses our original approved mascot artwork. [Image provenance and asset terms](docs/images/README.md).
 
-## What's new in 0.2.0
+## A guest on your desktop
 
-The island now includes seven built-in widgets, a vector mascot with seasonal outfits, and a redesigned Settings window. Music gains Windows player controls and a dedicated lyrics view; personal widgets bring tasks, calendar events, water tracking and file shortcuts into the same panel.
+- Hover or click the deliberate edge or eye target to open the island. Outside clicks fold it; interior clicks keep it open.
+- The companion stays at the monitor edge without reserving desktop space. Decorative areas pass clicks through, and ordinary island interactions leave keyboard focus with your work.
+- Reveal and fold animations can reverse smoothly when you change your mind. Hidden and reduced-motion states stop unnecessary gestures.
+- Use **Ctrl+Alt+P** to hide or restore PivO. Enable per-user autostart from the tray if you want a familiar face when Windows starts.
 
-| Widget | What it does |
-| --- | --- |
-| Music and lyrics | Shows the current Windows media session, artwork, playback controls and seeking. Displays synchronized or plain lyrics, with local import and configurable LRCLIB lookup. |
-| Tasks | Keeps tasks, deadlines and completion state, with direct island actions, ordering and optional reminders. |
-| Calendar | Shows month and week views, personal events, task dates and configurable holiday calendars. |
-| Pomodoro | Keeps focus and break timers, configurable durations and the progress ring, including a running timer across restarts. |
-| Water | Tracks daily intake, serving size and target, with undo, today's intake log and optional reminders. |
-| File shelf | Keeps shortcuts to selected files, with open, reveal and remove actions. Removing a shortcut preserves the original file. |
-| HUD and popups | Shows supported volume, brightness, input-language, keyboard, power and connectivity readings, with configurable notices. |
+## Bring PivO home
 
-Navigate with the page indicators, previous/next controls or the mouse wheel over the expanded content. Choose which widgets are enabled in their Settings pages. See [widget behavior and Windows support](docs/PLUGINS.md) for provider requirements and limitations.
+1. [Download PivO 0.2.0 for Windows x64](https://github.com/RedGry/pivo/releases/download/v0.2.0/PivO_0.2.0_x64-setup.exe).
+2. Run the installer for your Windows user, then launch PivO.
+3. Open Settings, pick your widgets and make yourself at home.
 
-The mascot has size and motion controls, idle expressions, cursor gaze and holiday outfits. The interface supports Dark, Light and System themes, shared English/Russian localization, and a visual display selector. Panel motion is reversible and respects reduced-motion settings.
+Microsoft Edge WebView2 Runtime is required; the installer handles the normal runtime prerequisite. PivO is currently a Windows x64 prototype. See the [roadmap](docs/PLAN.md) for future work.
 
-Read the [0.2.0 release notes](https://github.com/RedGry/pivo/releases/tag/v0.2.0) for the complete feature list. Actual validation results and remaining native-test limits are recorded in [VALIDATION.md](docs/VALIDATION.md).
+### Already have PivO?
 
-## Install
+Open **Settings → Updates → Check now**, then use the island's update action when a version is offered. The tray can also check for updates. Automatic checks are optional, and installation always needs your action.
 
-1. Download [PivO_0.2.0_x64-setup.exe](https://github.com/RedGry/pivo/releases/download/v0.2.0/PivO_0.2.0_x64-setup.exe).
-2. Run the installer. PivO installs for your Windows user.
-3. Launch PivO and open Settings to choose a monitor, theme, language and widgets. Autostart is available in the tray.
+Portable copies need a first installation with the setup executable before using installed updates. Updater signatures protect updates and are separate from Windows Authenticode signing, so the installer may still show a SmartScreen prompt.
 
-Microsoft Edge WebView2 Runtime is required. The installer handles the normal runtime prerequisite. PivO is currently a Windows x64 prototype; other platforms are not included in this release.
+[Release notes](https://github.com/RedGry/pivo/releases/tag/v0.2.0) · [Full changelog](CHANGELOG.md) · [Update setup](docs/UPDATES.md)
 
-The updater signature protects PivO updates. It is separate from Windows Authenticode signing, so Windows may still show a SmartScreen prompt for the installer.
+<details>
+<summary><strong>Players, lyrics and preview limitations</strong></summary>
 
-## Update
+Media controls depend on the active player's Windows integration. Synchronized lyrics follow the player timeline; plain text scrolls independently. Online lookup sends the current track's metadata to LRCLIB while Music is open and can be disabled in Music Settings.
 
-Open **Settings → Updates → Check now**, then use the island's update action when a new version is offered. Automatic checks are optional; installing an update always requires a deliberate action. The tray also offers a manual update check.
+Experimental approximate synchronization for plain lyrics uses local process audio capture and requires a separately installed whisper.cpp CLI and multilingual model. Those tools are not bundled. See the [widget guide](docs/PLUGINS.md) for setup.
 
-Portable copies need a first installation with the setup executable before using installed updates. See [update setup and acceptance](docs/UPDATES.md) for signing and release details.
+The signed installed 0.1.0 → 0.2.0 update, preserved language/theme settings and automatic visible restart were exercised in a disposable Sandbox with an explicit WebView2 runtime path. Native Explorer drop, current mixed-DPI/fullscreen behavior and actual sleep/resume still have validation gaps. The [validation record](docs/VALIDATION.md) describes exact checks and limits.
 
-## Desktop behavior
+</details>
 
-- **Eyes** keeps the compact mascot visible. **Strip** tucks the capsule partly above the screen edge while retaining its compact row. **Expanded** reveals the current widget and controls.
-- **Auto** chooses Eyes when the compact footprint is clear and Strip when an ordinary window overlaps it. Compact overrides are available in Settings.
-- The current edge or eye target reveals the island. Returning through the old expanded body does not reopen it. Outside clicks fold it; interior clicks keep it open.
-- Decorative areas pass pointer input through. The selected physical monitor anchors the panel without changing the desktop work area. A disconnected display choice is preserved and recovered on reconnect.
-- **Ctrl+Alt+P** hides or restores the companion. Hidden and reduced-motion states stop unnecessary gestures.
+## For the curious
 
-## Build
+PivO is built with Tauri 2, Rust and TypeScript, without a frontend UI framework. Read the [architecture](docs/ARCHITECTURE.md), [contributing guide](CONTRIBUTING.md) or [isolated Windows test setup](docs/TEST-ENVIRONMENT.md).
 
-PivO uses Tauri 2, Rust and TypeScript, without a frontend UI framework. Install Rust stable, Visual Studio Build Tools with C++ tools and the Windows SDK, Node.js 24 and Microsoft Edge WebView2 Runtime.
+<details>
+<summary><strong>Build PivO from source</strong></summary>
+
+Install Rust stable, Visual Studio Build Tools with C++ tools and the Windows SDK, Node.js 24 and Microsoft Edge WebView2 Runtime.
 
 ```powershell
 npm --prefix windows/frontend ci
@@ -100,16 +175,14 @@ npm --prefix windows/frontend run build
 cargo build -p pivo-windows --release --locked
 ```
 
-The executable is written to `target/release/pivo.exe`. For frontend reload during development, run `npm --prefix windows/frontend run desktop:dev`.
+The executable is written to `target/release/pivo.exe`. Use `npm --prefix windows/frontend run desktop:dev` for frontend reload during development.
 
-Run the application validation with `pwsh -NoProfile -File scripts/validate.ps1`. For isolated interactive Windows testing, see [the test environment](docs/TEST-ENVIRONMENT.md). Native UI acceptance requires an interactive Windows desktop.
+Run the application validation with `pwsh -NoProfile -File scripts/validate.ps1`.
 
-## Contribute
+</details>
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), the [roadmap](docs/PLAN.md) and [architecture](docs/ARCHITECTURE.md). Active development uses `release/0.2.0`; changes reach protected `main` through reviewed pull requests and the required Windows CI check.
+## A note on our little friend
 
-## License
-
-Code is [MIT licensed](LICENSE). The mascot, artwork, sounds and branding have [separate terms](LICENSE-ASSETS.md); [asset provenance](assets/README.md) records their sources.
+The code is [MIT licensed](LICENSE). PivO's mascot, artwork, sounds and branding have [separate asset terms](LICENSE-ASSETS.md), with ownership recorded in [asset provenance](assets/README.md).
 
 Dependency and Rust library notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

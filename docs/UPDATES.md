@@ -37,6 +37,7 @@ The updater signature confirms that an update was signed by PivO's key. It is se
 Before tagging, update the public presentation alongside the binaries:
 
 - Refresh README download links, feature descriptions and screenshots from the version being released. Remove obsolete milestone text and record the capture version, date and provenance in `docs/images/README.md`.
+- Retain the approved bare mascot in the README hero unless the project owner requests replacing it. Review the first-screen visual hierarchy, personality and feature coverage alongside screenshot freshness.
 - Write **What's new** and **Install** sections. Group accumulated changes by user-facing feature, explain useful behavior and preserve important compatibility or dependency requirements. Do not reduce a large release to a few generic category bullets.
 - In `CHANGELOG.md`, keep the version heading at level two and use level-three section headings so the release extractor retains the complete entry. Installation instructions must cover the Windows x64 setup file, the existing installed-update path and first installation for portable copies.
 - Check the rendered README images and release description before publication. Separate verified behavior from known limits, and link the validation record where appropriate.

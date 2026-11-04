@@ -243,3 +243,10 @@ The later progress requirement binds the ring to real active-plugin timer data. 
 - Improvement: add a Release presentation checklist to `docs/UPDATES.md`: refresh version-matched README captures and their provenance, describe accumulated features by useful behavior, and include installation/update instructions. Published release prose can be corrected without changing immutable tags or assets.
 - Result: rewrite README for the released feature set, replace its six captures with actual published 0.2.0 Dark/English images, and expand the changelog and release description to 25 substantive feature bullets with installation and validation sections.
 - Verification: all six Dark captures were visually inspected and matched the original MCP capture hashes. README local targets, release-note section boundaries, the three release-metadata tests and `git diff --check` passed. Application gates were not rerun for documentation-only changes.
+
+## 2026-11-04: Preserve the mascot and README personality
+
+- Correction: the refreshed README lost the approved bare mascot, felt technical and uninviting, and compressed important capabilities too heavily.
+- Cause: the prior rewrite checked screenshot freshness and release completeness but removed the original hero and did not review the first-screen visual hierarchy or the character's role in the presentation.
+- Improvement: add an explicit bare-mascot preservation and visual-hierarchy check to the existing release presentation checklist in `docs/UPDATES.md`. Restore `assets/mascot.png` as the README hero, introduce the mascot's personality before the seven widget cards, and explain customization, holidays and island behavior before developer material.
+- Verification: the actual GitHub Markdown renderer preserved the hero, cards, galleries and disclosure sections. Wide and narrow local previews were visually inspected and independently reviewed. The original mascot and six Dark-theme screenshots remained unchanged; local targets and the documentation diff passed focused checks. No application builds were needed.

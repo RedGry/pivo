@@ -15,4 +15,4 @@ The captures show English and Dark theme in a disposable Windows guest. Expanded
 
 Each image was inspected before inclusion. The images contain PivO's own interface and default or public calendar data. Screenshots document appearance; see [validation](../VALIDATION.md) for actual interaction checks and test-environment limits.
 
-The mascot is the current vector presentation of the approved PivO character. Ownership and provenance are recorded in [assets/README.md](../../assets/README.md). Artwork and screenshots containing the mascot remain subject to [LICENSE-ASSETS.md](../../LICENSE-ASSETS.md); the code's MIT license does not grant separate mascot or branding rights.
+The README hero uses the approved original `assets/mascot.png`, without clothing or accessories. The application captures show its current vector presentation. Ownership and provenance are recorded in [assets/README.md](../../assets/README.md). Artwork and screenshots containing the mascot remain subject to [LICENSE-ASSETS.md](../../LICENSE-ASSETS.md); the code's MIT license does not grant separate mascot or branding rights.
